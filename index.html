@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- ===== CSS Files ===== -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/skins/color-1.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- ===== Style Switcher ===== -->
+    <link rel="stylesheet" href="css/skins/color-1.css" class="alternate-style" title="color-1" disabled>
+    <link rel="stylesheet" href="css/skins/color-2.css" class="alternate-style" title="color-2" disabled>
+    <link rel="stylesheet" href="css/skins/color-3.css" class="alternate-style" title="color-3" disabled>
+    <link rel="stylesheet" href="css/skins/color-4.css" class="alternate-style" title="color-4" disabled>
+    <link rel="stylesheet" href="css/skins/color-5.css" class="alternate-style" title="color-5" disabled>
+    <link rel="stylesheet" href="css/style-switcher.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <!-- ===== Main Container Start ===== -->
+ <div class="main-container">
+        <!-- ===== Aside Start ===== -->
+        <div class="aside" id="sidebar">
+            <div class="logo">
+                <a href="#"><span>M</span>eryam's <span>P</span>ortfolio</a>
+            </div>
+            
+            <!-- Icône pour revenir en mode vertical (visible uniquement en mode horizontal) -->
+            <div class="vertical-toggle" id="verticalToggle" title="Switch to Vertical Layout">
+                <i class="fas fa-grip-lines-vertical"></i>
+            </div>
+            
+            <div class="nav-toggler">
+                <span></span>
+            </div>
+            <ul class="nav">
+                <li><a href="#home" class="active"><i class="fa fa-home"></i> <span class="nav-text">Home</span></a></li>
+                <li><a href="#about"><i class="fa fa-user"></i> <span class="nav-text">About</span></a></li>
+                <li><a href="#services"><i class="fa fa-list"></i> <span class="nav-text">Services</span></a></li>
+                <li><a href="#portfolio"><i class="fa fa-briefcase"></i> <span class="nav-text">Portfolio</span></a></li>
+                <li><a href="#contact"><i class="fa fa-comments"></i> <span class="nav-text">Contact</span></a></li>
+            </ul>
+        </div>
+        <!-- ===== Aside End ===== -->
+        
+        <!-- ===== Main Content Start ===== -->
+        <div class="main-content">
+            <!-- Vos sections existantes... -->
+            <section class="home active section" id="home">
+                <div class="container">
+                    <div class="row">
+                        <div class="home-info padd-15">
+                            <h3 class="hello">Hello, my name is <span class="name">Meryem</span></h3>
+                            <h3 class="my-profession">I'm a <span class="typing">DevOps Engineer</span></h3>
+                            <p>I'm a Computer Science student specializing in Web & Mobile Development.</p>
+                            
+                            <div class="home-buttons">
+                                <a href="images/CV.jpg" class="btn">Download CV</a>
+                                <div class="social-icons">
+                                    <a href="https://github.com/meryemmerzoug" target="_blank">
+                                        <i class="fab fa-github"></i>
+                                    </a>
+                                    <a href="https://instagram.com/meryem_mg2" target="_blank">
+                                        <i class="fab fa-instagram"></i>
+                                    </a>
+                                    <a href="mailto:merzougmeryem892@gmail.com">
+                                        <i class="fas fa-envelope"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="home-img padd-15">
+                            <img src="images/hero.jpg" alt="">
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- ===== Home Section End ===== -->
+            <!-- ===== About Section Start ===== -->
+            <section class="about section" id="about">
+                <div class="container">
+                    <div class="row">
+                        <div class="section-title padd-15">
+                            <h2>About Me</h2>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="about-content padd-15">
+                            <div class="row">
+                                <div class="about-text padd-15">
+                                    <h3>I'm  <span>Meryem</span>,</h3>
+                                    <p>a Computer Science graduate currently pursuing a Master's degree 
+in <strong>Information Systems and Advanced Engineering (ISIA)</strong>.  
+I specialize in <strong>web and mobile development</strong>, building applications with 
+<strong>HTML, CSS, JavaScript, Python, Django, and PHP</strong>.  
+
+Besides coding, I have a strong passion for <strong>UI/UX design</strong> and enjoy creating modern, user-friendly 
+interfaces using <strong>Figma</strong> and <strong>Canva</strong>.  
+My goal is to grow as an <strong>engineer</strong> in advanced systems and contribute to impactful digital solutions.</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="personal-info padd-15">
+                                    <div class="row">
+                                        <div class="info-item padd-15">
+                                            <p>Birthday: <span>29 july 2003</span></p>
+                                        </div>
+                                        <div class="info-item padd-15">
+                                            <p>Age: <span>22</span></p>
+                                        </div>
+                                        <div class="info-item padd-15">
+                                            <p>Email: <span>merzougmeryem892@gmail.com</span></p>
+                                        </div>
+                                        <div class="info-item padd-15">
+                                            <p>Phone: <span>0553988830</span></p>
+                                        </div>
+                                        <div class="info-item padd-15">
+                                            <p>City: <span>Chlef, Algeria</span></p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="buttons padd-15">
+                                            <a href="#contact" data-section-index="1" class="btn hire-me">Hire me</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="skills padd-15">
+                                    <div class="row">
+                                        <div class="skill-item padd-15">
+                                            <h5>CSS</h5>
+                                            <div class="progress">
+                                                <div class="progress-in" style="width: 86%;"></div>
+                                                <div class="skill-percent">86%</div>
+                                            </div>
+                                        </div>
+                                        <div class="skill-item padd-15">
+                                            <h5>JS</h5>
+                                            <div class="progress">
+                                                <div class="progress-in" style="width: 76%;"></div>
+                                                <div class="skill-percent">76%</div>
+                                            </div>
+                                        </div>
+                                        <div class="skill-item padd-15">
+                                            <h5>PHP</h5>
+                                            <div class="progress">
+                                                <div class="progress-in" style="width: 64%;"></div>
+                                                <div class="skill-percent">64%</div>
+                                            </div>
+                                        </div>
+                                        <div class="skill-item padd-15">
+                                            <h5>HTML</h5>
+                                            <div class="progress">
+                                                <div class="progress-in" style="width: 90%;"></div>
+                                                <div class="skill-percent">90%</div>
+                                            </div>
+                                        </div>
+                                         <div class="skill-item padd-15">
+                                            <h5>Python(Django Fram-Work)</h5>
+                                            <div class="progress">
+                                                <div class="progress-in" style="width: 90%;"></div>
+                                                <div class="skill-percent">80%</div>
+                                            </div>
+                                        </div>
+                                         <div class="skill-item padd-15">
+                                            <h5>Figma/Canva</h5>
+                                            <div class="progress">
+                                                <div class="progress-in" style="width: 90%;"></div>
+                                                <div class="skill-percent">60...85%</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="education padd-15">
+                                    <h3 class="title">Education</h3>
+                                    <div class="row">
+                                        <div class="timeline-box padd-15">
+                                            <div class="timeline shadow-dark">
+                                                <!-- ===== Timeline item ===== -->
+                                                <div class="timeline-item">
+                                                    <div class="circle-dot"></div>
+                                                    <h3 class="timeline-date">
+                                                        <i class="fa fa-calendar"></i> 2022 - 2025
+                                                    </h3>
+                                                    <h4 class="timeline-title">Bachelor's in Computer Science</h4>
+                                                    <p class="timeline-text">Passionate about web and mobile technologies, I have developed strong skills in programming (Python, Django, PHP, JavaScript, HTML, CSS) and in designing both web and mobile applications. Throughout my studies, I have built a solid foundation in problem-solving, software development, and database management. I also combine my technical expertise with creativity in design (Figma, Canva), allowing me to deliver solutions that are both functional and visually appealing.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                               <div class="experience padd-15">
+    <h3 class="title">Experience</h3>
+    <div class="row">
+        <div class="timeline-box padd-15">
+            <div class="timeline shadow-dark">
+                <div class="timeline-item">
+                    <div class="circle-dot"></div>
+                    <h4 class="timeline-title">Final Year Project</h4>
+                    <ul class="timeline-text">
+                        <li>Developed an e-commerce web application with multiple user roles</li>
+                        <li>Implemented category management, shopping cart, orders, and personalized dashboards</li>
+                        <li>Technologies: Django, PostgreSQL, HTML/CSS/JS</li>
+                    </ul>
+                </div>
+                <div class="timeline-item">
+                    <div class="circle-dot"></div>
+                    <h4 class="timeline-title">Personal Projects</h4>
+                    <ul class="timeline-text">
+                        <li>Created modern portfolio and showcase websites</li>
+                        <li>Built mobile applications with Android Studio (Java)</li>
+                        <li>Designed UI/UX mockups with Figma and Canva</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- ===== About Section End ===== -->
+            <!-- ===== Services Section Start ===== -->
+           <section class="service section" id="services">
+    <div class="container">
+        <div class="row">
+            <div class="section-title padd-15">
+                <h2>Services</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="service-item padd-15">
+                <div class="service-item-inner">
+                    <div class="icon">
+                        <i class="fa fa-laptop-code"></i>
+                    </div>
+                    <h4>Web Development</h4>
+                    <p>Building responsive and dynamic websites using Django, PHP, HTML, CSS, and JavaScript.</p>
+                </div>
+            </div>
+            <div class="service-item padd-15">
+                <div class="service-item-inner">
+                    <div class="icon">
+                        <i class="fa fa-mobile-alt"></i>
+                    </div>
+                    <h4>Mobile Development</h4>
+                    <p>Creating Android applications with Java and providing user-friendly mobile solutions.</p>
+                </div>
+            </div>
+            <div class="service-item padd-15">
+                <div class="service-item-inner">
+                    <div class="icon">
+                        <i class="fa fa-shopping-cart"></i>
+                    </div>
+                    <h4>E-commerce Solutions</h4>
+                    <p>Developing e-commerce platforms with shopping carts, order management, and dashboards.</p>
+                </div>
+            </div>
+            <div class="service-item padd-15">
+                <div class="service-item-inner">
+                    <div class="icon">
+                        <i class="fa fa-database"></i>
+                    </div>
+                    <h4>Database Management</h4>
+                    <p>Designing and managing relational databases with PostgreSQL and MySQL.</p>
+                </div>
+            </div>
+            <div class="service-item padd-15">
+                <div class="service-item-inner">
+                    <div class="icon">
+                        <i class="fa fa-pencil-ruler"></i>
+                    </div>
+                    <h4>UI/UX Design</h4>
+                    <p>Designing creative and modern interfaces using Figma and Canva for web and mobile apps.</p>
+                </div>
+            </div>
+            <div class="service-item padd-15">
+                <div class="service-item-inner">
+                    <div class="icon">
+                        <i class="fa fa-project-diagram"></i>
+                    </div>
+                    <h4>Project Development</h4>
+                    <p>Managing software projects from idea to deployment with strong problem-solving skills.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+            <!-- ===== Services Section End ===== -->
+            <!-- ===== Portfolio Section Start ===== -->
+        <!-- ===== Portfolio Section ===== -->
+<section class="portfolio section" id="portfolio">
+            <div class="container">
+                <div class="row">
+                    <div class="section-title padd-15">
+                        <h2>Portfolio</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="portfolio-heading padd-15">
+    <h2>My Last Projects:</h2>
+    <div class="btn-group">
+        <button id="addProjectBtn" class="btn-icon" title="Add Project">
+            <i class="fas fa-plus"></i>
+        </button>
+        <button id="deleteProjectBtn" class="btn-icon" title="Delete Project">
+            <i class="fas fa-trash"></i>
+        </button>
+    </div>
+</div>
+
+                    <!-- ===== Modal Form (Add Project) ===== -->
+                    <div id="addProjectModal" class="modal">
+                        <div class="modal-content">
+                            <span class="close">&times;</span>
+                            <h3>Add New Project</h3>
+                            <form id="projectForm">
+                                <input type="text" id="projectTitle" placeholder="Project Title" required>
+                                
+                                <label>Main Image:</label>
+                                <input type="file" id="mainImage" accept="image/*" required>
+                                <div id="mainImagePreview" class="image-previews"></div>
+                                
+                                <label>Other Images:</label>
+                                <div class="multiple-hint">(Hold Ctrl/Cmd to select multiple images)</div>
+                                <input type="file" id="otherImages" accept="image/*" multiple>
+                                <div id="otherImagesPreview" class="image-previews"></div>
+                                
+                                <div class="form-actions">
+                                    <button type="submit" class="btn add">Add Project</button>
+                                    <button type="button" id="cancelProject" class="btn cancel">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="portfolioItemsContainer">
+                    <!-- Les éléments de portfolio seront générés ici -->
+                </div>
+            </div>
+        </section>
+<!-- ===== Lightbox ===== -->
+  <!-- ===== Lightbox ===== -->
+<div id="lightbox" class="lightbox">
+    <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
+    <div class="lightbox-content">
+        <div class="lightbox-nav">
+            <button id="prevImage" class="btn-icon" title="Image précédente">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button id="nextImage" class="btn-icon" title="Image suivante">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+        <div class="lightbox-img-container">
+            <img id="lightbox-img" class="lightbox-img" src="">
+        </div>
+        <div class="lightbox-thumbs">
+            <!-- Les miniatures du projet seront affichées ici -->
+        </div>
+    </div>
+</div>
+        
+        <!-- ===== Confirmation Modal ===== -->
+        <div id="confirmationModal" class="confirmation-modal">
+            <div class="confirmation-content">
+                <p>Are you sure you want to delete this project?</p>
+                <div class="confirmation-buttons">
+                    <button id="confirmDelete" class="btn confirm">Yes, Delete</button>
+                    <button id="cancelDelete" class="btn cancel">Cancel</button>
+                </div>
+            </div>
+        </div>
+    <!-- ===== Modal d'authentification ===== -->
+    <div id="authModal" class="auth-modal">
+        <div class="auth-content">
+            <h3>Choisissez votre mode d'accès</h3>
+            <div class="auth-options">
+                <div class="auth-option" data-role="visitor">
+                    <i class="fas fa-user"></i>
+                    <span>Visiteur</span>
+                </div>
+                <div class="auth-option" data-role="admin">
+                    <i class="fas fa-lock"></i>
+                    <span>Administrateur</span>
+                </div>
+            </div>
+            
+            <div id="adminForm" class="auth-form">
+                <input type="password" id="adminCode" placeholder="Code administrateur">
+                <div id="authError" class="auth-error">Code incorrect. Veuillez réessayer.</div>
+            </div>
+            
+            <div class="auth-buttons">
+                <button id="confirmAuth" class="btn confirm">Confirmer</button>
+                <button id="cancelAuth" class="btn cancel">Annuler</button>
+            </div>
+        </div>
+    </div>
+            <!-- ===== Portfolio Section End ===== -->
+            <!-- ===== Contact Us Section Start ===== -->
+<section class="contact section" id="contact">
+  <div class="container">
+    <div class="row">
+      <div class="section-title padd-15">
+        <h2>Contact Me</h2>
+      </div>
+    </div>
+
+    <h3 class="contact-title padd-15">Have You Any Questions?</h3>
+    <h4 class="contact-sub-title padd-15">I'M AT YOUR SERVICE</h4>
+
+    <div class="row">
+      <!-- Contact Info Item -->
+      <div class="contact-info-item padd-15">
+        <div class="icon"><i class="fa fa-phone"></i></div>
+        <h4>Call Us On</h4>
+        <p>0553988830</p>
+      </div>
+
+      <!-- Contact Info Item -->
+      <div class="contact-info-item padd-15">
+        <div class="icon"><i class="fa fa-envelope"></i></div>
+        <h4>Email</h4>
+        <p>merzougmeryem892@gmail.com</p>
+      </div>
+    </div>
+
+    <h3 class="contact-title padd-15">SEND ME AN EMAIL</h3>
+    <h4 class="contact-sub-title padd-15">I'M VERY RESPONSIVE TO MESSAGES</h4>
+
+    <!-- ===== Contact Form ===== -->
+    <div class="row">
+      <form action="https://formspree.io/f/xrbadlnl" method="POST" class="contact-form padd-15">
+        
+        <!-- Name + Email same line -->
+        <div class="row">
+          <div class="form-item col-6 padd-15">
+            <div class="form-group">
+              <input type="text" name="name" class="form-control" placeholder="Name" required>
+            </div>
+          </div>
+          <div class="form-item col-6 padd-15">
+            <div class="form-group">
+              <input type="email" name="email" class="form-control" placeholder="Email" required>
+            </div>
+          </div>
+        </div>
+
+        <!-- Subject full width -->
+        <div class="row">
+          <div class="form-item col-12 padd-15">
+            <div class="form-group">
+              <input type="text" name="subject" class="form-control" placeholder="Subject" required>
+            </div>
+          </div>
+        </div>
+
+        <!-- Message full width -->
+        <div class="row">
+          <div class="form-item col-12 padd-15">
+            <div class="form-group">
+              <textarea name="message" class="form-control" placeholder="Message" required></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Button -->
+        <div class="row">
+          <div class="form-item col-12 padd-15">
+            <button type="submit" class="btn">Send Message</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+
+            <!-- ===== Contact Us Section End ===== -->
+        </div>
+        <!-- ===== Main Content End ===== -->
+    </div>
+    <!-- ===== Main Container End ===== -->
+    
+    <!-- ===== Style Switcher Start ===== -->
+    <div class="style-switcher">
+        <div class="style-switcher-toggler s-icon">
+            <i class="fas fa-cog fa-spin"></i>
+        </div>
+        
+        <!-- NOUVELLE ICÔNE SIDEBAR -->
+        <div class="sidebar-toggle s-icon" id="sidebarToggle" title="Toggle Sidebar Layout">
+            <i class="fas fa-bars"></i>
+        </div>
+        
+        <div class="day-night s-icon">
+            <i class="fas fa-moon"></i>
+        </div>
+        
+        <h4>Theme Colors</h4>
+        <div class="colors">
+            <span class="color-1" onclick="setActiveStyle('color-1')"></span>
+            <span class="color-2" onclick="setActiveStyle('color-2')"></span>
+            <span class="color-3" onclick="setActiveStyle('color-3')"></span>
+            <span class="color-4" onclick="setActiveStyle('color-4')"></span>
+            <span class="color-5" onclick="setActiveStyle('color-5')"></span>
+        </div>
+    </div>
+    <!-- ===== Style Switcher End ===== -->
+
+    <!-- ===== JS Files ===== -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.1.0/typed.umd.js" integrity="sha512-+2pW8xXU/rNr7VS+H62aqapfRpqFwnSQh9ap6THjsm41AxgA0MhFRtfrABS+Lx2KHJn82UOrnBKhjZOXpom2LQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="js/script.js"></script>
+    <script src="js/style-switcher.js"></script>
+ <script>
+        // Votre code JavaScript existant pour la gestion du portfolio
+        // Gestion des données des projets
+        let projects = {};
+        let nextProjectId = 1;
+        let deleteMode = false;
+        let projectToDelete = null;
+        
+        // Variables pour la navigation dans la lightbox
+        let currentLightboxProjectId = null;
+        let currentImageIndex = 0;
+
+        // Charger les données depuis le localStorage
+        function loadProjects() {
+            const savedProjects = localStorage.getItem('portfolioProjects');
+            if (savedProjects) {
+                projects = JSON.parse(savedProjects);
+                
+                // Trouver le prochain ID disponible
+                const ids = Object.keys(projects).map(id => parseInt(id));
+                nextProjectId = ids.length > 0 ? Math.max(...ids) + 1 : 1;
+                
+                renderProjects();
+            } else {
+                // Données par défaut
+                projects = {
+                    1: {
+                        title: "E-commerce Website",
+                        mainImage: "images/img9.png",
+                        otherImages: ["images/img11.png", "images/img10.png", "images/img2.png"]
+                    },
+                    2: {
+                        title: "Local Brand Hub",
+                        mainImage: "images/img1.png",
+                        otherImages: ["images/img13.png", "images/img12.png", "images/img3.png", "images/img8.png"]
+                    }
+                };
+                nextProjectId = 3;
+                saveProjects();
+                renderProjects();
+            }
+        }
+
+        // Sauvegarder les projets dans le localStorage
+        function saveProjects() {
+            localStorage.setItem('portfolioProjects', JSON.stringify(projects));
+        }
+
+        // Afficher les projets dans le portfolio
+        function renderProjects() {
+            const container = document.getElementById('portfolioItemsContainer');
+            container.innerHTML = '';
+            
+            Object.keys(projects).forEach(id => {
+                const project = projects[id];
+                const projectDiv = document.createElement('div');
+                projectDiv.className = 'portfolio-item padd-15';
+                projectDiv.setAttribute('data-project-id', id);
+                
+                projectDiv.innerHTML = `
+                    <div class="portfolio-item-inner shadow-dark">
+                        <div class="portfolio-img">
+                            <img src="${project.mainImage}" alt="${project.title}">
+                            <div class="portfolio-title">${project.title}</div>
+                        </div>
+                    </div>
+                `;
+                
+                projectDiv.addEventListener('click', function() {
+                    if (deleteMode) {
+                        // Afficher la confirmation de suppression
+                        projectToDelete = id;
+                        showDeleteConfirmation();
+                    } else {
+                        // Ouvrir la lightbox
+                        openLightbox(id);
+                    }
+                });
+                
+                container.appendChild(projectDiv);
+            });
+        }
+
+        // Afficher la confirmation de suppression
+        function showDeleteConfirmation() {
+            const modal = document.getElementById('confirmationModal');
+            modal.style.display = 'flex';
+        }
+
+        // Cacher la confirmation de suppression
+        function hideDeleteConfirmation() {
+            const modal = document.getElementById('confirmationModal');
+            modal.style.display = 'none';
+            projectToDelete = null;
+        }
+
+        // Ouvrir la lightbox avec les images du projet
+        function openLightbox(id) {
+            const project = projects[id];
+            if (!project) return;
+            
+            currentLightboxProjectId = id;
+            currentImageIndex = 0;
+            
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            const thumbsContainer = document.querySelector('.lightbox-thumbs');
+            
+            // Afficher l'image principale
+            lightboxImg.src = project.mainImage;
+            
+            // Créer les miniatures
+            thumbsContainer.innerHTML = '';
+            
+            // Ajouter l'image principale comme première miniature
+            const mainThumb = document.createElement('img');
+            mainThumb.src = project.mainImage;
+            mainThumb.className = 'lightbox-thumb active';
+            mainThumb.addEventListener('click', () => {
+                lightboxImg.src = project.mainImage;
+                updateActiveThumb(mainThumb);
+                currentImageIndex = 0;
+            });
+            thumbsContainer.appendChild(mainThumb);
+            
+            // Ajouter les autres images
+            if (project.otherImages && project.otherImages.length > 0) {
+                project.otherImages.forEach((imageSrc, index) => {
+                    const thumb = document.createElement('img');
+                    thumb.src = imageSrc;
+                    thumb.className = 'lightbox-thumb';
+                    thumb.addEventListener('click', () => {
+                        lightboxImg.src = imageSrc;
+                        updateActiveThumb(thumb);
+                        currentImageIndex = index + 1;
+                    });
+                    thumbsContainer.appendChild(thumb);
+                });
+            }
+            
+            lightbox.style.display = 'flex';
+        }
+
+        // Mettre à jour la miniature active
+        function updateActiveThumb(activeThumb) {
+            document.querySelectorAll('.lightbox-thumb').forEach(thumb => {
+                thumb.classList.remove('active');
+            });
+            activeThumb.classList.add('active');
+        }
+
+        // Fermer la lightbox
+        function closeLightbox() {
+            document.getElementById('lightbox').style.display = 'none';
+            currentLightboxProjectId = null;
+        }
+
+        // Navigation entre les images
+        function navigateImage(direction) {
+            if (!currentLightboxProjectId) return;
+            
+            const project = projects[currentLightboxProjectId];
+            if (!project) return;
+            
+            // Créer un tableau de toutes les images (principale + autres)
+            const allImages = [project.mainImage, ...(project.otherImages || [])];
+            
+            // Calculer le nouvel index
+            currentImageIndex += direction;
+            
+            // Gérer les débordements
+            if (currentImageIndex < 0) {
+                currentImageIndex = allImages.length - 1;
+            } else if (currentImageIndex >= allImages.length) {
+                currentImageIndex = 0;
+            }
+            
+            // Mettre à jour l'image affichée
+            const lightboxImg = document.getElementById('lightbox-img');
+            lightboxImg.src = allImages[currentImageIndex];
+            
+            // Mettre à jour la miniature active
+            const thumbs = document.querySelectorAll('.lightbox-thumb');
+            if (thumbs.length > currentImageIndex) {
+                updateActiveThumb(thumbs[currentImageIndex]);
+            }
+        }
+
+        // Activer le mode suppression
+        function enableDeleteMode() {
+            deleteMode = true;
+            document.getElementById('deleteProjectBtn').classList.add('active');
+            document.getElementById('portfolioItemsContainer').classList.add('delete-mode');
+        }
+
+        // Désactiver le mode suppression
+        function disableDeleteMode() {
+            deleteMode = false;
+            document.getElementById('deleteProjectBtn').classList.remove('active');
+            document.getElementById('portfolioItemsContainer').classList.remove('delete-mode');
+        }
+
+        // Afficher l'aperçu des images
+        function setupImagePreview(inputElement, previewContainer, isMultiple) {
+            inputElement.addEventListener('change', function() {
+                if (isMultiple) {
+                    // Pour plusieurs images
+                    for (let i = 0; i < this.files.length; i++) {
+                        const file = this.files[i];
+                        const reader = new FileReader();
+                        
+                        reader.onload = function(e) {
+                            const previewDiv = document.createElement('div');
+                            previewDiv.className = 'image-preview';
+                            
+                            previewDiv.innerHTML = `
+                                <img src="${e.target.result}" alt="Preview">
+                                <span class="remove-image">&times;</span>
+                            `;
+                            
+                            previewDiv.querySelector('.remove-image').addEventListener('click', function() {
+                                previewDiv.remove();
+                            });
+                            
+                            previewContainer.appendChild(previewDiv);
+                        };
+                        
+                        reader.readAsDataURL(file);
+                    }
+                } else {
+                    // Pour une seule image
+                    previewContainer.innerHTML = '';
+                    
+                    if (this.files && this.files[0]) {
+                        const reader = new FileReader();
+                        
+                        reader.onload = function(e) {
+                            const previewDiv = document.createElement('div');
+                            previewDiv.className = 'image-preview';
+                            
+                            previewDiv.innerHTML = `
+                                <img src="${e.target.result}" alt="Preview">
+                                <span class="remove-image">&times;</span>
+                            `;
+                            
+                            previewDiv.querySelector('.remove-image').addEventListener('click', function() {
+                                previewContainer.innerHTML = '';
+                                inputElement.value = '';
+                            });
+                            
+                            previewContainer.appendChild(previewDiv);
+                        };
+                        
+                        reader.readAsDataURL(this.files[0]);
+                    }
+                }
+            });
+        }
+
+        // Initialiser l'application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Charger les projets
+            loadProjects();
+            
+            // Références aux éléments DOM
+            const addBtn = document.getElementById('addProjectBtn');
+            const deleteBtn = document.getElementById('deleteProjectBtn');
+            const modal = document.getElementById('addProjectModal');
+            const closeModal = document.querySelector('.modal .close');
+            const cancelBtn = document.getElementById('cancelProject');
+            const projectForm = document.getElementById('projectForm');
+            const confirmDeleteBtn = document.getElementById('confirmDelete');
+            const cancelDeleteBtn = document.getElementById('cancelDelete');
+            const prevImageBtn = document.getElementById('prevImage');
+            const nextImageBtn = document.getElementById('nextImage');
+            
+            // Configurer les aperçus d'images
+            setupImagePreview(document.getElementById('mainImage'), document.getElementById('mainImagePreview'), false);
+            setupImagePreview(document.getElementById('otherImages'), document.getElementById('otherImagesPreview'), true);
+            
+            // Configurer la navigation de la lightbox
+            prevImageBtn.addEventListener('click', () => navigateImage(-1));
+            nextImageBtn.addEventListener('click', () => navigateImage(1));
+            
+            // Ouvrir modal
+            addBtn.addEventListener('click', function() {
+                modal.style.display = 'flex';
+            });
+            
+            // Fermer modal
+            closeModal.addEventListener('click', function() {
+                modal.style.display = 'none';
+                projectForm.reset();
+                document.getElementById('mainImagePreview').innerHTML = '';
+                document.getElementById('otherImagesPreview').innerHTML = '';
+            });
+            
+            cancelBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+                projectForm.reset();
+                document.getElementById('mainImagePreview').innerHTML = '';
+                document.getElementById('otherImagesPreview').innerHTML = '';
+            });
+            
+            window.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                    projectForm.reset();
+                    document.getElementById('mainImagePreview').innerHTML = '';
+                    document.getElementById('otherImagesPreview').innerHTML = '';
+                }
+            });
+            
+            // Activer/désactiver mode suppression
+            deleteBtn.addEventListener('click', function() {
+                if (deleteMode) {
+                    disableDeleteMode();
+                } else {
+                    enableDeleteMode();
+                }
+            });
+            
+            // Confirmation de suppression
+            confirmDeleteBtn.addEventListener('click', function() {
+                if (projectToDelete) {
+                    delete projects[projectToDelete];
+                    saveProjects();
+                    renderProjects();
+                    disableDeleteMode();
+                    hideDeleteConfirmation();
+                }
+            });
+            
+            cancelDeleteBtn.addEventListener('click', function() {
+                hideDeleteConfirmation();
+            });
+            
+            // Ajouter un nouveau projet
+            projectForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const title = document.getElementById('projectTitle').value;
+                const mainImageFile = document.getElementById('mainImage').files[0];
+                const otherImageFiles = document.getElementById('otherImages').files;
+                
+                if (!title || !mainImageFile) {
+                    alert('Please add a title and a main image.');
+                    return;
+                }
+                
+                // Convertir les images en URLs de données
+                const mainImageReader = new FileReader();
+                mainImageReader.onload = function(e) {
+                    const mainImageDataUrl = e.target.result;
+                    
+                    const otherImagesDataUrls = [];
+                    let processedImages = 0;
+                    
+                    // Traiter les autres images
+                    if (otherImageFiles.length > 0) {
+                        for (let i = 0; i < otherImageFiles.length; i++) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                otherImagesDataUrls.push(e.target.result);
+                                processedImages++;
+                                
+                                // Quand toutes les images sont traitées
+                                if (processedImages === otherImageFiles.length) {
+                                    addProjectToStorage(title, mainImageDataUrl, otherImagesDataUrls);
+                                }
+                            };
+                            reader.readAsDataURL(otherImageFiles[i]);
+                        }
+                    } else {
+                        // Aucune autre image
+                        addProjectToStorage(title, mainImageDataUrl, []);
+                    }
+                };
+                mainImageReader.readAsDataURL(mainImageFile);
+            });
+            
+            function addProjectToStorage(title, mainImage, otherImages) {
+                // Ajouter le nouveau projet
+                projects[nextProjectId] = {
+                    title: title,
+                    mainImage: mainImage,
+                    otherImages: otherImages
+                };
+                
+                // Sauvegarder et mettre à jour l'affichage
+                saveProjects();
+                renderProjects();
+                
+                // Fermer le modal et réinitialiser le formulaire
+                modal.style.display = 'none';
+                projectForm.reset();
+                document.getElementById('mainImagePreview').innerHTML = '';
+                document.getElementById('otherImagesPreview').innerHTML = '';
+                
+                // Incrémenter l'ID pour le prochain projet
+                nextProjectId++;
+            }
+        });
+    </script>
+<script>
+        // Variables pour la gestion de l'authentification
+        let userRole = 'visitor'; // Par défaut, mode visiteur
+        const ADMIN_CODE = '1111'; // Code administrateur
+        
+        // Références aux éléments d'authentification
+        const authModal = document.getElementById('authModal');
+        const authOptions = document.querySelectorAll('.auth-option');
+        const adminForm = document.getElementById('adminForm');
+        const adminCodeInput = document.getElementById('adminCode');
+        const authError = document.getElementById('authError');
+        const confirmAuthBtn = document.getElementById('confirmAuth');
+        const cancelAuthBtn = document.getElementById('cancelAuth');
+        
+        // Éléments de portfolio
+        const addBtn = document.getElementById('addProjectBtn');
+        const deleteBtn = document.getElementById('deleteProjectBtn');
+        const modal = document.getElementById('addProjectModal');
+        
+        // Fonction pour ouvrir le modal d'authentification
+        function openAuthModal() {
+            authModal.style.display = 'flex';
+            // Réinitialiser la sélection
+            authOptions.forEach(option => option.classList.remove('active'));
+            adminForm.style.display = 'none';
+            adminCodeInput.value = '';
+            authError.style.display = 'none';
+        }
+        
+        // Fonction pour fermer le modal d'authentification
+        function closeAuthModal() {
+            authModal.style.display = 'none';
+        }
+        
+        // Gestionnaire de clic pour les options d'authentification
+        authOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                authOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                
+                const role = this.getAttribute('data-role');
+                
+                if (role === 'admin') {
+                    adminForm.style.display = 'block';
+                } else {
+                    adminForm.style.display = 'none';
+                }
+            });
+        });
+        
+        // Confirmation de l'authentification
+        confirmAuthBtn.addEventListener('click', function() {
+            const selectedOption = document.querySelector('.auth-option.active');
+            
+            if (!selectedOption) {
+                authError.textContent = 'Veuillez sélectionner un mode d\'accès';
+                authError.style.display = 'block';
+                return;
+            }
+            
+            const role = selectedOption.getAttribute('data-role');
+            
+            if (role === 'admin') {
+                const enteredCode = adminCodeInput.value;
+                
+                if (enteredCode === ADMIN_CODE) {
+                    userRole = 'admin';
+                    closeAuthModal();
+                    alert('Mode administrateur activé. Vous pouvez maintenant ajouter et supprimer des projets.');
+                } else {
+                    authError.textContent = 'Code incorrect. Veuillez réessayer.';
+                    authError.style.display = 'block';
+                }
+            } else {
+                userRole = 'visitor';
+                closeAuthModal();
+                alert('Mode visiteur activé. Vous ne pouvez pas ajouter ou supprimer des projets.');
+            }
+        });
+        
+        // Annulation de l'authentification
+        cancelAuthBtn.addEventListener('click', closeAuthModal);
+        
+        // Modifier les gestionnaires de clic pour les boutons Add et Delete
+        addBtn.addEventListener('click', function() {
+            if (userRole !== 'admin') {
+                openAuthModal();
+            } else {
+                // Ouvrir le modal d'ajout de projet
+                modal.style.display = 'flex';
+            }
+        });
+        
+        deleteBtn.addEventListener('click', function() {
+            if (userRole !== 'admin') {
+                openAuthModal();
+            } else {
+                // Activer le mode suppression
+                if (deleteMode) {
+                    disableDeleteMode();
+                } else {
+                    enableDeleteMode();
+                }
+            }
+        });
+        
+        // Initialisation - Les boutons sont toujours visibles
+        document.addEventListener('DOMContentLoaded', function() {
+            // Les boutons restent visibles par défaut
+            addBtn.style.display = 'flex';
+            deleteBtn.style.display = 'flex';
+            
+            // Charger les projets
+            loadProjects();
+            
+            // Références aux éléments DOM
+            const closeModal = document.querySelector('.modal .close');
+            const cancelBtn = document.getElementById('cancelProject');
+            const projectForm = document.getElementById('projectForm');
+            const confirmDeleteBtn = document.getElementById('confirmDelete');
+            const cancelDeleteBtn = document.getElementById('cancelDelete');
+            const prevImageBtn = document.getElementById('prevImage');
+            const nextImageBtn = document.getElementById('nextImage');
+            
+            // Configurer les aperçus d'images
+            setupImagePreview(document.getElementById('mainImage'), document.getElementById('mainImagePreview'), false);
+            setupImagePreview(document.getElementById('otherImages'), document.getElementById('otherImagesPreview'), true);
+            
+            // Configurer la navigation de la lightbox
+            prevImageBtn.addEventListener('click', () => navigateImage(-1));
+            nextImageBtn.addEventListener('click', () => navigateImage(1));
+            
+            // Fermer modal
+            closeModal.addEventListener('click', function() {
+                modal.style.display = 'none';
+                projectForm.reset();
+                document.getElementById('mainImagePreview').innerHTML = '';
+                document.getElementById('otherImagesPreview').innerHTML = '';
+            });
+            
+            cancelBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+                projectForm.reset();
+                document.getElementById('mainImagePreview').innerHTML = '';
+                document.getElementById('otherImagesPreview').innerHTML = '';
+            });
+            
+            window.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                    projectForm.reset();
+                    document.getElementById('mainImagePreview').innerHTML = '';
+                    document.getElementById('otherImagesPreview').innerHTML = '';
+                }
+            });
+            
+            // Confirmation de suppression
+            confirmDeleteBtn.addEventListener('click', function() {
+                if (projectToDelete) {
+                    delete projects[projectToDelete];
+                    saveProjects();
+                    renderProjects();
+                    disableDeleteMode();
+                    hideDeleteConfirmation();
+                }
+            });
+            
+            cancelDeleteBtn.addEventListener('click', function() {
+                hideDeleteConfirmation();
+            });
+            
+            // Ajouter un nouveau projet
+            projectForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Vérifier si l'utilisateur est admin
+                if (userRole !== 'admin') {
+                    alert('Vous devez être en mode administrateur pour ajouter un projet.');
+                    openAuthModal();
+                    return;
+                }
+                
+                const title = document.getElementById('projectTitle').value;
+                const mainImageFile = document.getElementById('mainImage').files[0];
+                const otherImageFiles = document.getElementById('otherImages').files;
+                
+                if (!title || !mainImageFile) {
+                    alert('Veuillez ajouter un titre et une image principale.');
+                    return;
+                }
+                
+                // Convertir les images en URLs de données
+                const mainImageReader = new FileReader();
+                mainImageReader.onload = function(e) {
+                    const mainImageDataUrl = e.target.result;
+                    
+                    const otherImagesDataUrls = [];
+                    let processedImages = 0;
+                    
+                    // Traiter les autres images
+                    if (otherImageFiles.length > 0) {
+                        for (let i = 0; i < otherImageFiles.length; i++) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                otherImagesDataUrls.push(e.target.result);
+                                processedImages++;
+                                
+                                // Quand toutes les images sont traitées
+                                if (processedImages === otherImageFiles.length) {
+                                    addProjectToStorage(title, mainImageDataUrl, otherImagesDataUrls);
+                                }
+                            };
+                            reader.readAsDataURL(otherImageFiles[i]);
+                        }
+                    } else {
+                        // Aucune autre image
+                        addProjectToStorage(title, mainImageDataUrl, []);
+                    }
+                };
+                mainImageReader.readAsDataURL(mainImageFile);
+            });
+        });
+        
+        // Fonction pour ajouter un projet au stockage
+        function addProjectToStorage(title, mainImage, otherImages) {
+            // Ajouter le nouveau projet
+            projects[nextProjectId] = {
+                title: title,
+                mainImage: mainImage,
+                otherImages: otherImages
+            };
+            
+            // Sauvegarder et mettre à jour l'affichage
+            saveProjects();
+            renderProjects();
+            
+            // Fermer le modal et réinitialiser le formulaire
+            modal.style.display = 'none';
+            projectForm.reset();
+            document.getElementById('mainImagePreview').innerHTML = '';
+            document.getElementById('otherImagesPreview').innerHTML = '';
+            
+            // Incrémenter l'ID pour le prochain projet
+            nextProjectId++;
+        }
+    </script>
+<script>
+/**
+ * SIDEBAR TOGGLE FUNCTIONALITY - Version bidirectionnelle
+ */
+
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const verticalToggle = document.getElementById('verticalToggle');
+    const body = document.body;
+    const sidebar = document.getElementById('sidebar');
+    
+    // État initial - vérifier le mode sauvegardé
+    const savedMode = localStorage.getItem('sidebarMode');
+    if (savedMode === 'horizontal') {
+        enableHorizontalMode();
+    } else {
+        disableHorizontalMode();
+    }
+    
+    // Event listener pour l'icône principale (style switcher) - BIDIRECTIONNEL
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', function() {
+            if (body.classList.contains('sidebar-horizontal')) {
+                // Passer en mode vertical
+                disableHorizontalMode();
+                localStorage.setItem('sidebarMode', 'vertical');
+            } else {
+                // Passer en mode horizontal
+                enableHorizontalMode();
+                localStorage.setItem('sidebarMode', 'horizontal');
+            }
+        });
+    }
+    
+    // Event listener pour l'icône dans le sidebar horizontal (retour au vertical)
+    if (verticalToggle) {
+        verticalToggle.addEventListener('click', function() {
+            disableHorizontalMode();
+            localStorage.setItem('sidebarMode', 'vertical');
+        });
+    }
+    
+    /**
+     * Active le mode horizontal
+     */
+    function enableHorizontalMode() {
+        body.classList.add('sidebar-horizontal');
+        updateSidebarToggleIcon('horizontal');
+        
+        // Fermer le sidebar mobile s'il est ouvert
+        if (window.innerWidth < 1200) {
+            closeMobileSidebar();
+        }
+    }
+    
+    /**
+     * Active le mode vertical (par défaut)
+     */
+    function disableHorizontalMode() {
+        body.classList.remove('sidebar-horizontal');
+        updateSidebarToggleIcon('vertical');
+    }
+    
+    /**
+     * Met à jour l'icône du toggle principal
+     */
+    function updateSidebarToggleIcon(mode) {
+        if (sidebarToggle) {
+            if (mode === 'horizontal') {
+                sidebarToggle.querySelector('i').className = 'fas fa-grip-lines-vertical';
+                sidebarToggle.setAttribute('title', 'Switch to Vertical Layout');
+            } else {
+                sidebarToggle.querySelector('i').className = 'fas fa-bars';
+                sidebarToggle.setAttribute('title', 'Switch to Horizontal Layout');
+            }
+        }
+    }
+    
+    /**
+     * Ferme le sidebar mobile
+     */
+    function closeMobileSidebar() {
+        sidebar.classList.remove('open');
+        const navToggler = document.querySelector('.nav-toggler');
+        if (navToggler) {
+            navToggler.classList.remove('open');
+        }
+        document.querySelectorAll('.section').forEach(section => {
+            section.classList.remove('open');
+        });
+    }
+    
+    // Event listener pour le redimensionnement
+    window.addEventListener('resize', function() {
+        if (body.classList.contains('sidebar-horizontal') && window.innerWidth >= 1200) {
+            const navToggler = document.querySelector('.nav-toggler');
+            if (navToggler) {
+                navToggler.style.display = 'none';
+            }
+        }
+    });
+    
+    // Animation smooth
+    function addSmoothTransition() {
+        sidebar.style.transition = 'all 0.3s ease';
+        const mainContent = document.querySelector('.main-content');
+        if (mainContent) {
+            mainContent.style.transition = 'all 0.3s ease';
+        }
+    }
+    
+    addSmoothTransition();
+});
+</script>
+</body>
+</html>

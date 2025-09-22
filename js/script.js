@@ -719,37 +719,62 @@ class PortfolioManager {
 
     // Setup multiple image preview
     setupMultipleImagePreview(inputElement, previewContainer) {
-        inputElement.addEventListener('change', function() {
-            previewContainer.innerHTML = '';
+    inputElement.addEventListener('change', function() {
+        // Ne pas vider le conteneur pour ajouter aux images existantes
+        if (this.files && this.files.length > 0) {
+            const files = Array.from(this.files);
             
-            if (this.files && this.files.length > 0) {
-                const files = Array.from(this.files);
-                
-                files.forEach((file, index) => {
-                    const reader = new FileReader();
-                    
-                    reader.onload = function(e) {
-                        const previewDiv = document.createElement('div');
-                        previewDiv.className = 'image-preview';
-                        previewDiv.setAttribute('data-file-index', index);
-                        
-                        previewDiv.innerHTML = `
-                            <img src="${e.target.result}" alt="Preview">
-                            <span class="remove-image">&times;</span>
-                        `;
-                        
-                        previewDiv.querySelector('.remove-image').addEventListener('click', function() {
-                            previewDiv.remove();
-                        });
-                        
-                        previewContainer.appendChild(previewDiv);
-                    };
-                    
-                    reader.readAsDataURL(file);
+            files.forEach((file, index) => {
+                // Vérifier si le fichier n'est pas déjà affiché
+                const existingPreviews = Array.from(previewContainer.querySelectorAll('.image-preview'));
+                const isAlreadyDisplayed = existingPreviews.some(preview => {
+                    const img = preview.querySelector('img');
+                    return img && img.alt === file.name;
                 });
-            }
-        });
+                
+                if (isAlreadyDisplayed) return; // Skip si déjà affiché
+                
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const previewDiv = document.createElement('div');
+                    previewDiv.className = 'image-preview';
+                    previewDiv.setAttribute('data-file-index', index);
+                    
+                    previewDiv.innerHTML = `
+                        <img src="${e.target.result}" alt="${file.name}" title="${file.name}">
+                        <span class="remove-image">&times;</span>
+                    `;
+                    
+                    previewDiv.querySelector('.remove-image').addEventListener('click', function() {
+                        previewDiv.remove();
+                        // Mettre à jour l'input file pour refléter la suppression
+                        updateFileInputAfterRemoval(inputElement, file.name);
+                    });
+                    
+                    previewContainer.appendChild(previewDiv);
+                };
+                
+                reader.readAsDataURL(file);
+            });
+        }
+    });
+    
+    // Fonction pour mettre à jour l'input file après suppression
+    function updateFileInputAfterRemoval(input, fileName) {
+        const dt = new DataTransfer();
+        const files = Array.from(input.files);
+        
+        // Garder tous les fichiers sauf celui supprimé
+        const remainingFiles = files.filter(file => file.name !== fileName);
+        
+        // Ajouter les fichiers restants au DataTransfer
+        remainingFiles.forEach(file => dt.items.add(file));
+        
+        // Mettre à jour les fichiers de l'input
+        input.files = dt.files;
     }
+}
 }
 
 // Initialize portfolio manager

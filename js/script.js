@@ -123,7 +123,6 @@ window.addEventListener('resize', function() {
         }
     }
 });*/
-
 // Typing Animation
 var typed = new Typed(".typing", {
     strings: ["", "Web Designer", "Web Developer", "Mobile App Developer", "Graphic Designer"],
@@ -253,16 +252,47 @@ class PortfolioManager {
         this.ADMIN_CODE = '1111';
         this.pendingAction = null;
         this.nextProjectId = 1;
+        
+        // Clé pour le stockage local
+        this.STORAGE_KEY = 'portfolio_projects';
     }
 
-    // Initialize with default projects
+    // Initialize with saved projects or default ones
     init() {
-        this.loadDefaultProjects();
+        this.loadProjects();
         this.setupEventListeners();
         this.renderProjects();
     }
 
-    // Load default projects
+    // Load projects from localStorage or create default ones
+    loadProjects() {
+        const savedProjects = localStorage.getItem(this.STORAGE_KEY);
+        
+        if (savedProjects) {
+            try {
+                this.projects = JSON.parse(savedProjects);
+                // Trouver le prochain ID disponible
+                this.nextProjectId = Math.max(...this.projects.map(p => p.id)) + 1;
+                if (!isFinite(this.nextProjectId)) this.nextProjectId = 1;
+            } catch (error) {
+                console.error('Error loading saved projects:', error);
+                this.loadDefaultProjects();
+            }
+        } else {
+            this.loadDefaultProjects();
+        }
+    }
+
+    // Save projects to localStorage
+    saveProjects() {
+        try {
+            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.projects));
+        } catch (error) {
+            console.error('Error saving projects:', error);
+        }
+    }
+
+    // Load default projects (only if no saved projects)
     loadDefaultProjects() {
         this.projects = [
             {
@@ -285,9 +315,10 @@ class PortfolioManager {
             }
         ];
         this.nextProjectId = 3;
+        this.saveProjects(); // Sauvegarder les projets par défaut
     }
 
-    // Add new project
+    // Add new project (MODIFIÉ pour sauvegarder)
     async addProject(projectData) {
         const mainImageData = await this.fileToDataURL(projectData.mainImage);
         const otherImagesData = [];
@@ -307,14 +338,16 @@ class PortfolioManager {
             }
         };
 
-        this.projects.unshift(newProject); // Add to beginning
+        this.projects.unshift(newProject);
+        this.saveProjects(); // SAUVEGARDER après ajout
         this.renderProjects();
         return newProject.id;
     }
 
-    // Delete project
+    // Delete project (MODIFIÉ pour sauvegarder)
     deleteProject(projectId) {
         this.projects = this.projects.filter(p => p.id != projectId);
+        this.saveProjects(); // SAUVEGARDER après suppression
         this.renderProjects();
     }
 
@@ -717,64 +750,48 @@ class PortfolioManager {
         });
     }
 
-    // Setup multiple image preview
+    // Setup multiple image preview - VERSION CORRIGÉE
     setupMultipleImagePreview(inputElement, previewContainer) {
-    inputElement.addEventListener('change', function() {
-        // Ne pas vider le conteneur pour ajouter aux images existantes
-        if (this.files && this.files.length > 0) {
-            const files = Array.from(this.files);
+        inputElement.addEventListener('change', function() {
+            // Vider le conteneur à chaque nouvelle sélection
+            previewContainer.innerHTML = '';
             
-            files.forEach((file, index) => {
-                // Vérifier si le fichier n'est pas déjà affiché
-                const existingPreviews = Array.from(previewContainer.querySelectorAll('.image-preview'));
-                const isAlreadyDisplayed = existingPreviews.some(preview => {
-                    const img = preview.querySelector('img');
-                    return img && img.alt === file.name;
+            if (this.files && this.files.length > 0) {
+                const files = Array.from(this.files);
+                
+                files.forEach((file, index) => {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        const previewDiv = document.createElement('div');
+                        previewDiv.className = 'image-preview';
+                        
+                        previewDiv.innerHTML = `
+                            <img src="${e.target.result}" alt="Preview ${index + 1}">
+                            <span class="remove-image">&times;</span>
+                            <div class="image-name">${file.name}</div>
+                        `;
+                        
+                        previewDiv.querySelector('.remove-image').addEventListener('click', function() {
+                            previewDiv.remove();
+                            // Réinitialiser l'input file
+                            inputElement.value = '';
+                        });
+                        
+                        previewContainer.appendChild(previewDiv);
+                    };
+                    
+                    reader.readAsDataURL(file);
                 });
                 
-                if (isAlreadyDisplayed) return; // Skip si déjà affiché
-                
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    const previewDiv = document.createElement('div');
-                    previewDiv.className = 'image-preview';
-                    previewDiv.setAttribute('data-file-index', index);
-                    
-                    previewDiv.innerHTML = `
-                        <img src="${e.target.result}" alt="${file.name}" title="${file.name}">
-                        <span class="remove-image">&times;</span>
-                    `;
-                    
-                    previewDiv.querySelector('.remove-image').addEventListener('click', function() {
-                        previewDiv.remove();
-                        // Mettre à jour l'input file pour refléter la suppression
-                        updateFileInputAfterRemoval(inputElement, file.name);
-                    });
-                    
-                    previewContainer.appendChild(previewDiv);
-                };
-                
-                reader.readAsDataURL(file);
-            });
-        }
-    });
-    
-    // Fonction pour mettre à jour l'input file après suppression
-    function updateFileInputAfterRemoval(input, fileName) {
-        const dt = new DataTransfer();
-        const files = Array.from(input.files);
-        
-        // Garder tous les fichiers sauf celui supprimé
-        const remainingFiles = files.filter(file => file.name !== fileName);
-        
-        // Ajouter les fichiers restants au DataTransfer
-        remainingFiles.forEach(file => dt.items.add(file));
-        
-        // Mettre à jour les fichiers de l'input
-        input.files = dt.files;
+                // Afficher le nombre d'images sélectionnées
+                const countInfo = document.createElement('div');
+                countInfo.className = 'file-count-info';
+                countInfo.textContent = `${files.length} image(s) sélectionnée(s)`;
+                previewContainer.appendChild(countInfo);
+            }
+        });
     }
-}
 }
 
 // Initialize portfolio manager

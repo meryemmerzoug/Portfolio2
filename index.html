@@ -315,29 +315,37 @@ My goal is to grow as an <strong>engineer</strong> in advanced systems and contr
 </div>
 
                     <!-- ===== Modal Form (Add Project) ===== -->
-                    <div id="addProjectModal" class="modal">
-                        <div class="modal-content">
-                            <span class="close">&times;</span>
-                            <h3>Add New Project</h3>
-                            <form id="projectForm">
-                                <input type="text" id="projectTitle" placeholder="Project Title" required>
-                                
-                                <label>Main Image:</label>
-                                <input type="file" id="mainImage" accept="image/*" required>
-                                <div id="mainImagePreview" class="image-previews"></div>
-                                
-                                <label>Other Images:</label>
-                                <div class="multiple-hint">(Hold Ctrl/Cmd to select multiple images)</div>
-                                <input type="file" id="otherImages" accept="image/*" multiple>
-                                <div id="otherImagesPreview" class="image-previews"></div>
-                                
-                                <div class="form-actions">
-                                    <button type="submit" class="btn add">Add Project</button>
-                                    <button type="button" id="cancelProject" class="btn cancel">Cancel</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
+                   <div id="addProjectModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3>Add New Project</h3>
+        <form id="projectForm">
+            <div class="form-group">
+                <label for="projectTitle">Project Title:</label>
+                <input type="text" id="projectTitle" placeholder="Project Title" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="mainImage">Main Image:</label>
+                <input type="file" id="mainImage" accept="image/*" required>
+                <div class="file-hint">(Required - Will be used as cover image)</div>
+                <div id="mainImagePreview" class="image-previews"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="otherImages">Other Images:</label>
+                <input type="file" id="otherImages" accept="image/*" multiple>
+                <div class="file-hint">(Optional - You can select multiple images with Ctrl+Click or by dragging)</div>
+                <div id="otherImagesPreview" class="image-previews multiple-previews"></div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn add">Add Project</button>
+                <button type="button" id="cancelProject" class="btn cancel">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
                 </div>
                 <div class="row" id="portfolioItemsContainer">
                     <!-- Les éléments de portfolio seront générés ici -->

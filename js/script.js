@@ -754,9 +754,14 @@ class PortfolioManager {
     }
 
     // Setup multiple image preview - VERSION CORRIGÉE
-    setupMultipleImagePreview(inputElement, previewContainer) {
+    // Setup multiple image preview - VERSION COMPLÈTEMENT CORRIGÉE
+setupMultipleImagePreview(inputElement, previewContainer) {
+    const self = this; // Garder une référence au contexte
+    
     inputElement.addEventListener('change', function(event) {
         const files = event.target.files;
+        
+        console.log('Fichiers sélectionnés:', files); // Debug
         
         if (!files || files.length === 0) {
             previewContainer.innerHTML = '';
@@ -774,103 +779,141 @@ class PortfolioManager {
         countInfo.innerHTML = `<i class="fas fa-images"></i> ${files.length} image(s) sélectionnée(s)`;
         previewContainer.appendChild(countInfo);
 
-        // Ajouter un indicateur de chargement
-        const loadingIndicator = document.createElement('div');
-        loadingIndicator.className = 'loading-indicator active';
-        loadingIndicator.innerHTML = '<i class="fas fa-spinner"></i> Chargement des images...';
-        previewContainer.appendChild(loadingIndicator);
-
         // Traiter chaque fichier
-        let loadedCount = 0;
-        const validFiles = [];
-
         Array.from(files).forEach((file, index) => {
             // Validation du fichier
-            const validationErrors = this.validateImageFile(file);
-            
-            if (validationErrors.length > 0) {
-                this.showImageError(previewContainer, file, validationErrors.join(', '));
-                loadedCount++;
+            if (!file.type.startsWith('image/')) {
+                self.showImageError(previewContainer, file, 'Le fichier n\'est pas une image');
                 return;
             }
 
-            validFiles.push(file);
-            this.processImageFile(file, index, previewContainer, loadingIndicator, () => {
-                loadedCount++;
-                this.updateLoadingState(loadedCount, files.length, loadingIndicator, previewContainer);
-            });
-        });
+            if (file.size > 10 * 1024 * 1024) { // 10MB max
+                self.showImageError(previewContainer, file, 'Fichier trop volumineux (max 10MB)');
+                return;
+            }
 
-        // Si aucun fichier valide
-        if (validFiles.length === 0) {
-            this.updateLoadingState(files.length, files.length, loadingIndicator, previewContainer);
-        }
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const previewDiv = document.createElement('div');
+                previewDiv.className = 'image-preview';
+                previewDiv.setAttribute('data-index', index);
+
+                previewDiv.innerHTML = `
+                    <img src="${e.target.result}" alt="Prévisualisation ${index + 1}">
+                    <span class="remove-image" data-index="${index}" title="Supprimer cette image">
+                        <i class="fas fa-times"></i>
+                    </span>
+                    <div class="image-name">${file.name.length > 15 ? file.name.substring(0, 12) + '...' : file.name}</div>
+                `;
+
+                previewContainer.appendChild(previewDiv);
+
+                // Ajouter l'événement de suppression
+                const removeBtn = previewDiv.querySelector('.remove-image');
+                removeBtn.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                    self.removeImage(index, inputElement, previewContainer);
+                });
+            };
+
+            reader.onerror = function() {
+                self.showImageError(previewContainer, file, 'Erreur de chargement');
+            };
+
+            reader.readAsDataURL(file);
+        });
     });
 
     // Ajouter le support du Drag & Drop
     this.addDragAndDropSupport(previewContainer, inputElement);
-}
+},
 
-// Valider un fichier image
-validateImageFile(file, maxSizeMB = 10) {
-    const errors = [];
-    const maxSize = maxSizeMB * 1024 * 1024;
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-
-    if (!file.type.startsWith('image/')) {
-        errors.push('Le fichier n\'est pas une image');
-    } else if (!allowedTypes.includes(file.type.toLowerCase())) {
-        errors.push('Type d\'image non supporté');
-    }
-
-    if (file.size > maxSize) {
-        errors.push(`Taille maximale dépassée (${maxSizeMB}MB)`);
-    }
-
-    return errors;
-}
-
-// Traiter un fichier image
-processImageFile(file, index, previewContainer, loadingIndicator, onLoadCallback) {
-    const reader = new FileReader();
-
-    reader.onload = (e) => {
-        const previewDiv = document.createElement('div');
-        previewDiv.className = 'image-preview';
-        previewDiv.setAttribute('data-index', index);
-        previewDiv.setAttribute('data-filename', file.name);
-
-        previewDiv.innerHTML = `
-            <img src="${e.target.result}" alt="Prévisualisation ${index + 1}">
-            <span class="remove-image" data-index="${index}" title="Supprimer cette image">
-                <i class="fas fa-times"></i>
-            </span>
-            <div class="image-name">${this.truncateFilename(file.name)}</div>
-        `;
-
-        // Insérer avant l'indicateur de chargement
-        previewContainer.insertBefore(previewDiv, loadingIndicator);
-
-        // Ajouter l'événement de suppression
-        this.addRemoveImageListener(previewDiv, index, previewContainer);
-        
-        onLoadCallback();
-    };
-
-    reader.onerror = () => {
-        this.showImageError(previewContainer, file, 'Erreur de chargement');
-        onLoadCallback();
-    };
-
-    reader.readAsDataURL(file);
-}
-
-// Ajouter le support Drag & Drop
-addDragAndDropSupport(previewContainer, inputElement) {
-    // Événements Drag & Drop
-    const dragEvents = ['dragenter', 'dragover', 'dragleave', 'drop'];
+// Méthode pour supprimer une image
+removeImage(index, inputElement, previewContainer) {
+    // Créer un nouveau FileList sans le fichier supprimé
+    const dt = new DataTransfer();
+    const currentFiles = Array.from(inputElement.files);
     
-    dragEvents.forEach(eventName => {
+    currentFiles.forEach((file, i) => {
+        if (i !== index) {
+            dt.items.add(file);
+        }
+    });
+    
+    inputElement.files = dt.files;
+    
+    // Mettre à jour l'affichage
+    this.updatePreviewsAfterRemoval(previewContainer, inputElement);
+},
+
+// Mettre à jour les prévisualisations après suppression
+updatePreviewsAfterRemoval(previewContainer, inputElement) {
+    const files = inputElement.files;
+    previewContainer.innerHTML = '';
+    
+    if (files.length === 0) {
+        previewContainer.classList.remove('has-images');
+        return;
+    }
+
+    // Réafficher toutes les images restantes
+    Array.from(files).forEach((file, newIndex) => {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            const previewDiv = document.createElement('div');
+            previewDiv.className = 'image-preview';
+            previewDiv.setAttribute('data-index', newIndex);
+
+            previewDiv.innerHTML = `
+                <img src="${e.target.result}" alt="Prévisualisation ${newIndex + 1}">
+                <span class="remove-image" data-index="${newIndex}" title="Supprimer cette image">
+                    <i class="fas fa-times"></i>
+                </span>
+                <div class="image-name">${file.name.length > 15 ? file.name.substring(0, 12) + '...' : file.name}</div>
+            `;
+
+            previewContainer.appendChild(previewDiv);
+
+            // Réattacher l'événement de suppression
+            const removeBtn = previewDiv.querySelector('.remove-image');
+            removeBtn.addEventListener('click', function(event) {
+                event.stopPropagation();
+                const indexToRemove = parseInt(this.getAttribute('data-index'));
+                
+                // Recréer la FileList sans l'image supprimée
+                const newDt = new DataTransfer();
+                const currentFiles = Array.from(inputElement.files);
+                
+                currentFiles.forEach((file, i) => {
+                    if (i !== indexToRemove) {
+                        newDt.items.add(file);
+                    }
+                });
+                
+                inputElement.files = newDt.files;
+                
+                // Mettre à jour l'affichage
+                const self = window.portfolioManager;
+                self.updatePreviewsAfterRemoval(previewContainer, inputElement);
+            });
+        };
+
+        reader.readAsDataURL(file);
+    });
+
+    // Mettre à jour le compteur
+    const countInfo = previewContainer.querySelector('.file-count-info');
+    if (countInfo) {
+        countInfo.innerHTML = `<i class="fas fa-images"></i> ${files.length} image(s) sélectionnée(s)`;
+    }
+},
+
+// Support Drag & Drop simplifié
+addDragAndDropSupport(previewContainer, inputElement) {
+    // Empêcher le comportement par défaut
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         previewContainer.addEventListener(eventName, preventDefaults, false);
     });
 
@@ -879,128 +922,31 @@ addDragAndDropSupport(previewContainer, inputElement) {
         e.stopPropagation();
     }
 
-    // Styles pendant le drag
-    const highlight = () => {
-        previewContainer.style.borderColor = 'var(--skin-color)';
-        previewContainer.style.background = 'rgba(var(--skin-color-rgb), 0.1)';
-        previewContainer.style.transform = 'scale(1.02)';
-    };
+    // Effet visuel pendant le drag
+    ['dragenter', 'dragover'].forEach(eventName => {
+        previewContainer.addEventListener(eventName, () => {
+            previewContainer.style.borderColor = 'var(--skin-color)';
+            previewContainer.style.background = 'rgba(var(--skin-color-rgb), 0.1)';
+        }, false);
+    });
 
-    const unhighlight = () => {
-        previewContainer.style.borderColor = '';
-        previewContainer.style.background = '';
-        previewContainer.style.transform = '';
-    };
-
-    previewContainer.addEventListener('dragenter', highlight, false);
-    previewContainer.addEventListener('dragover', highlight, false);
-    previewContainer.addEventListener('dragleave', unhighlight, false);
-    previewContainer.addEventListener('drop', unhighlight, false);
+    ['dragleave', 'drop'].forEach(eventName => {
+        previewContainer.addEventListener(eventName, () => {
+            previewContainer.style.borderColor = '';
+            previewContainer.style.background = '';
+        }, false);
+    });
 
     // Gestion du drop
     previewContainer.addEventListener('drop', (e) => {
-        const dt = e.dataTransfer;
-        const files = dt.files;
-
+        const files = e.dataTransfer.files;
         if (files.length > 0) {
-            // Créer un nouveau FileList avec les fichiers droppés
-            const newFileList = this.createNewFileList(inputElement.files, files);
-            inputElement.files = newFileList;
-            
-            // Déclencher l'événement change
+            inputElement.files = files;
             const changeEvent = new Event('change', { bubbles: true });
             inputElement.dispatchEvent(changeEvent);
         }
     }, false);
-}
-
-// Créer un nouveau FileList
-createNewFileList(existingFiles, newFiles) {
-    const dt = new DataTransfer();
-    
-    // Ajouter les fichiers existants
-    if (existingFiles) {
-        for (let file of existingFiles) {
-            dt.items.add(file);
-        }
-    }
-    
-    // Ajouter les nouveaux fichiers
-    for (let file of newFiles) {
-        if (file.type.startsWith('image/')) {
-            dt.items.add(file);
-        }
-    }
-    
-    return dt.files;
-}
-
-// Ajouter l'événement de suppression d'image
-addRemoveImageListener(previewDiv, index, previewContainer) {
-    const removeBtn = previewDiv.querySelector('.remove-image');
-    
-    removeBtn.addEventListener('click', (event) => {
-        event.stopPropagation();
-        
-        // Animation de suppression
-        previewDiv.style.transform = 'scale(0.8)';
-        previewDiv.style.opacity = '0';
-        
-        setTimeout(() => {
-            previewDiv.remove();
-            this.updateFileInputAfterRemoval(index, previewContainer);
-            this.updateImageCounter(previewContainer);
-        }, 300);
-    });
-}
-
-// Mettre à jour l'input file après suppression
-updateFileInputAfterRemoval(index, previewContainer) {
-    const form = previewContainer.closest('form');
-    const fileInput = form.querySelector('#otherImages');
-    const dt = new DataTransfer();
-    const currentFiles = Array.from(fileInput.files);
-    
-    // Recréer la liste sans le fichier supprimé
-    currentFiles.forEach((file, i) => {
-        if (i !== index) {
-            dt.items.add(file);
-        }
-    });
-    
-    fileInput.files = dt.files;
-    
-    // Mettre à jour les index des prévisualisations restantes
-    this.updateRemainingPreviewsIndexes(previewContainer);
-}
-
-// Mettre à jour les index des prévisualisations
-updateRemainingPreviewsIndexes(previewContainer) {
-    const previews = previewContainer.querySelectorAll('.image-preview');
-    let newIndex = 0;
-    
-    previews.forEach(preview => {
-        preview.setAttribute('data-index', newIndex);
-        const removeBtn = preview.querySelector('.remove-image');
-        removeBtn.setAttribute('data-index', newIndex);
-        newIndex++;
-    });
-}
-
-// Mettre à jour le compteur d'images
-updateImageCounter(previewContainer) {
-    const countInfo = previewContainer.querySelector('.file-count-info');
-    const currentPreviews = previewContainer.querySelectorAll('.image-preview');
-    
-    if (countInfo) {
-        countInfo.innerHTML = `<i class="fas fa-images"></i> ${currentPreviews.length} image(s)`;
-    }
-    
-    if (currentPreviews.length === 0) {
-        previewContainer.classList.remove('has-images');
-        previewContainer.innerHTML = '';
-    }
-}
+},
 
 // Afficher une erreur d'image
 showImageError(previewContainer, file, errorMessage) {
@@ -1010,33 +956,11 @@ showImageError(previewContainer, file, errorMessage) {
         <div style="display: flex; align-items: center; justify-content: center; height: 100%; flex-direction: column;">
             <i class="fas fa-exclamation-triangle" style="font-size: 24px; color: #ff4757; margin-bottom: 8px;"></i>
             <div style="font-size: 11px; text-align: center; color: #ff4757; padding: 0 5px;">
-                ${this.truncateFilename(file.name)} - ${errorMessage}
+                ${file.name.length > 15 ? file.name.substring(0, 12) + '...' : file.name} - ${errorMessage}
             </div>
         </div>
     `;
     previewContainer.appendChild(errorDiv);
-}
-
-// Mettre à jour l'état de chargement
-updateLoadingState(loadedCount, totalFiles, loadingIndicator, previewContainer) {
-    if (loadedCount >= totalFiles) {
-        loadingIndicator.remove();
-        
-        // Si aucune image valide
-        const validPreviews = previewContainer.querySelectorAll('.image-preview:not(.invalid)');
-        if (validPreviews.length === 0 && previewContainer.querySelectorAll('.image-preview.invalid').length > 0) {
-            const errorMsg = document.createElement('div');
-            errorMsg.className = 'error-message show';
-            errorMsg.innerHTML = '<i class="fas fa-exclamation-circle"></i> Aucune image valide n\'a été sélectionnée';
-            previewContainer.appendChild(errorMsg);
-        }
-    }
-}
-
-// Tronquer le nom de fichier si trop long
-truncateFilename(filename, maxLength = 15) {
-    if (filename.length <= maxLength) return filename;
-    return filename.substring(0, maxLength - 3) + '...';
 }
 }
 

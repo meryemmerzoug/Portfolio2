@@ -1,128 +1,3 @@
-/*
-// Typing Animation
-var typed = new Typed(".typing", {
-    strings: ["", "Web Designer", "Web Developer", "Mobile App Developer", "Graphic Designer"],
-    typeSpeed: 100,
-    BackSpeed: 60,
-    loop: true
-});
-
-// Navigation System
-const nav = document.querySelector(".nav"),
-    navList = nav.querySelectorAll("li"),
-    totalNavList = navList.length,
-    allSection = document.querySelectorAll(".section"),
-    totalSection = allSection.length;
-
-for(let i = 0; i < totalNavList; i++) {
-    const a = navList[i].querySelector("a");
-    a.addEventListener("click", function() {
-        removeBackSection();
-        for(let j = 0; j < totalNavList; j++) {
-            if(navList[j].querySelector("a").classList.contains("active")) {
-                addBackSection(j);
-            }
-            navList[j].querySelector("a").classList.remove("active");
-        }
-        this.classList.add("active");
-        showSelection(this);
-        if(window.innerWidth < 1200) {
-            // Ne pas fermer le sidebar en mode horizontal
-            if (!document.body.classList.contains('sidebar-horizontal')) {
-                asideSelectionTogglerBtn();
-            }
-        }
-    });
-}
-
-function removeBackSection() {
-    for(let i = 0; i < totalSection; i++) {
-        allSection[i].classList.remove("back-section");
-    }
-}
-
-function addBackSection(j) {
-    allSection[j].classList.add("back-section");
-}
-
-function showSelection(element) {
-    for(let i = 0; i < totalSection; i++) {
-        allSection[i].classList.remove("active");
-    }
-    const target = element.getAttribute("href").split("#")[1];
-    document.querySelector("#" + target).classList.add("active");
-}
-
-function updateNav(element) {
-    for(let i = 0; i < totalNavList; i++) {
-        navList[i].querySelector("a").classList.remove("active");
-        const target = element.getAttribute("href").split("#")[1];
-        if(target === navList[i].querySelector("a").getAttribute("href").split("#")[1]) {
-            navList[i].querySelector("a").classList.add("active");
-        }
-    }
-}
-
-// Hire me button
-document.querySelector(".hire-me").addEventListener("click", function() {
-    const sectionIndex = this.getAttribute("data-section-index");
-    showSelection(this);
-    updateNav(this);
-    removeBackSection();
-    addBackSection(sectionIndex);
-});
-
-// Nav Toggler (hamburger menu)
-const navTogglerBtn = document.querySelector(".nav-toggler"),
-    aside = document.querySelector(".aside");
-
-navTogglerBtn.addEventListener("click", () => {
-    asideSelectionTogglerBtn();
-});
-
-// Fonction modifiée pour prendre en compte le mode horizontal
-function asideSelectionTogglerBtn() {
-    // En mode horizontal sur desktop, ne pas utiliser le toggle mobile
-    if (document.body.classList.contains('sidebar-horizontal') && window.innerWidth >= 1200) {
-        return;
-    }
-    
-    aside.classList.toggle("open");
-    navTogglerBtn.classList.toggle("open");
-    for(let i = 0; i < totalSection; i++) {
-        allSection[i].classList.toggle("open");
-    }
-}
-
-// Ajustements responsive pour le mode sidebar
-window.addEventListener('resize', function() {
-    // Fermer le menu mobile si on passe en desktop
-    if (window.innerWidth >= 1200) {
-        aside.classList.remove("open");
-        navTogglerBtn.classList.remove("open");
-        for(let i = 0; i < totalSection; i++) {
-            allSection[i].classList.remove("open");
-        }
-    }
-    
-    // Ajustements spécifiques au mode horizontal
-    if (document.body.classList.contains('sidebar-horizontal')) {
-        if (window.innerWidth >= 1200) {
-            // Masquer le nav-toggler en mode horizontal desktop
-            navTogglerBtn.style.display = 'none';
-        } else {
-            // Afficher le nav-toggler en mode horizontal mobile
-            navTogglerBtn.style.display = 'flex';
-        }
-    } else {
-        // Comportement normal en mode vertical
-        if (window.innerWidth >= 1200) {
-            navTogglerBtn.style.display = 'none';
-        } else {
-            navTogglerBtn.style.display = 'flex';
-        }
-    }
-});*/
 // Typing Animation
 var typed = new Typed(".typing", {
     strings: ["", "Web Designer", "Web Developer", "Mobile App Developer", "Graphic Designer"],
@@ -270,10 +145,13 @@ class PortfolioManager {
     // Charger les projets depuis le serveur PHP
     async loadProjects() {
         try {
+            console.log('Loading projects from server...');
             const response = await fetch(this.API_URL);
             
             if (response.ok) {
                 const projects = await response.json();
+                console.log('Projects loaded:', projects);
+                
                 this.projects = Array.isArray(projects) ? projects : [];
                 
                 // Calculer le prochain ID
@@ -283,7 +161,7 @@ class PortfolioManager {
                     
                 this.showStatus('Projects loaded successfully', 'success');
             } else {
-                throw new Error('Server response not OK');
+                throw new Error('Server response not OK: ' + response.status);
             }
         } catch (error) {
             console.error('Error loading from server:', error);
@@ -301,8 +179,11 @@ class PortfolioManager {
         if (savedProjects) {
             try {
                 this.projects = JSON.parse(savedProjects);
-                this.nextProjectId = Math.max(...this.projects.map(p => p.id)) + 1;
+                this.nextProjectId = this.projects.length > 0 
+                    ? Math.max(...this.projects.map(p => p.id)) + 1 
+                    : 1;
                 if (!isFinite(this.nextProjectId)) this.nextProjectId = 1;
+                console.log('Projects loaded from localStorage:', this.projects);
             } catch (error) {
                 console.error('Error loading from localStorage:', error);
                 this.loadDefaultProjects();
@@ -315,6 +196,7 @@ class PortfolioManager {
     // Sauvegarder les projets sur le serveur PHP
     async saveProjects() {
         try {
+            console.log('Saving projects to server:', this.projects);
             const response = await fetch(this.API_URL, {
                 method: 'POST',
                 headers: {
@@ -324,10 +206,12 @@ class PortfolioManager {
             });
             
             const result = await response.json();
+            console.log('Save response:', result);
             
             if (result.success) {
                 // Sauvegarde de secours dans le localStorage
                 localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.projects));
+                this.showStatus('Projects saved successfully', 'success');
                 return true;
             } else {
                 throw new Error(result.error || 'Unknown error');
@@ -372,40 +256,47 @@ class PortfolioManager {
         ];
         this.nextProjectId = 3;
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.projects));
+        console.log('Default projects loaded');
     }
 
     // Ajouter un nouveau projet
     async addProject(projectData) {
-        const mainImageData = await this.fileToDataURL(projectData.mainImage);
-        const otherImagesData = [];
-        
-        // Traiter les images supplémentaires
-        if (projectData.otherImages && projectData.otherImages.length > 0) {
-            for (let file of projectData.otherImages) {
-                const dataUrl = await this.fileToDataURL(file);
-                otherImagesData.push(dataUrl);
+        try {
+            const mainImageData = await this.fileToDataURL(projectData.mainImage);
+            const otherImagesData = [];
+            
+            // Traiter les images supplémentaires
+            if (projectData.otherImages && projectData.otherImages.length > 0) {
+                for (let file of projectData.otherImages) {
+                    const dataUrl = await this.fileToDataURL(file);
+                    otherImagesData.push(dataUrl);
+                }
             }
-        }
 
-        const newProject = {
-            id: this.nextProjectId++,
-            title: projectData.title,
-            createdAt: new Date().toISOString(),
-            images: {
-                main: mainImageData,
-                others: otherImagesData
+            const newProject = {
+                id: this.nextProjectId++,
+                title: projectData.title,
+                createdAt: new Date().toISOString(),
+                images: {
+                    main: mainImageData,
+                    others: otherImagesData
+                }
+            };
+
+            this.projects.unshift(newProject);
+            
+            // Sauvegarder sur le serveur
+            const saved = await this.saveProjects();
+            if (saved) {
+                this.renderProjects();
+                return newProject.id;
+            } else {
+                throw new Error('Failed to save project');
             }
-        };
-
-        this.projects.unshift(newProject);
-        
-        // Sauvegarder sur le serveur
-        const saved = await this.saveProjects();
-        if (saved) {
-            this.renderProjects();
+        } catch (error) {
+            console.error('Error adding project:', error);
+            throw error;
         }
-        
-        return newProject.id;
     }
 
     // Supprimer un projet
@@ -448,7 +339,7 @@ class PortfolioManager {
             <div class="portfolio-item padd-15" data-project-id="${project.id}">
                 <div class="portfolio-item-inner shadow-dark">
                     <div class="portfolio-img">
-                        <img src="${project.images.main || 'images/placeholder.jpg'}" 
+                        <img src="${project.images.main}" 
                              alt="${project.title}" 
                              loading="lazy"
                              onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNmNGY0ZjQiLz48dGV4dCB4PSIxMDAiIHk9IjEwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iIGZvbnQtZmFtaWx5PSJzeXN0ZW0tdWksIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTRweCIgZmlsbD0iIzk5OTk5OSI+SW1hZ2U8L3RleHQ+PC9zdmc+'">
@@ -460,6 +351,10 @@ class PortfolioManager {
 
         this.attachProjectEvents();
     }
+
+    // Les autres méthodes restent les mêmes...
+    // [Tout le reste du code de la classe PortfolioManager reste identique]
+    // ... (attachProjectEvents, openLightbox, updateActiveThumb, navigateImage, etc.)
 
     // Attacher les événements aux projets
     attachProjectEvents() {

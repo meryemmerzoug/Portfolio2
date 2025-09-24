@@ -320,29 +320,32 @@ class PortfolioManager {
 
     // Add new project (MODIFIÉ pour sauvegarder)
     async addProject(projectData) {
-        const mainImageData = await this.fileToDataURL(projectData.mainImage);
-        const otherImagesData = [];
-        
+    const mainImageData = await this.fileToDataURL(projectData.mainImage);
+    const otherImagesData = [];
+    
+    // Correction ici : traiter tous les fichiers de otherImages
+    if (projectData.otherImages && projectData.otherImages.length > 0) {
         for (let file of projectData.otherImages) {
             const dataUrl = await this.fileToDataURL(file);
             otherImagesData.push(dataUrl);
         }
-
-        const newProject = {
-            id: this.nextProjectId++,
-            title: projectData.title,
-            createdAt: new Date().toISOString(),
-            images: {
-                main: mainImageData,
-                others: otherImagesData
-            }
-        };
-
-        this.projects.unshift(newProject);
-        this.saveProjects(); // SAUVEGARDER après ajout
-        this.renderProjects();
-        return newProject.id;
     }
+
+    const newProject = {
+        id: this.nextProjectId++,
+        title: projectData.title,
+        createdAt: new Date().toISOString(),
+        images: {
+            main: mainImageData,
+            others: otherImagesData
+        }
+    };
+
+    this.projects.unshift(newProject);
+    this.saveProjects();
+    this.renderProjects();
+    return newProject.id;
+}
 
     // Delete project (MODIFIÉ pour sauvegarder)
     deleteProject(projectId) {
@@ -752,46 +755,63 @@ class PortfolioManager {
 
     // Setup multiple image preview - VERSION CORRIGÉE
     setupMultipleImagePreview(inputElement, previewContainer) {
-        inputElement.addEventListener('change', function() {
-            // Vider le conteneur à chaque nouvelle sélection
-            previewContainer.innerHTML = '';
+    inputElement.addEventListener('change', function() {
+        // Vider le conteneur à chaque nouvelle sélection
+        previewContainer.innerHTML = '';
+        
+        if (this.files && this.files.length > 0) {
+            const files = Array.from(this.files);
             
-            if (this.files && this.files.length > 0) {
-                const files = Array.from(this.files);
+            // Afficher le nombre d'images sélectionnées en premier
+            const countInfo = document.createElement('div');
+            countInfo.className = 'file-count-info';
+            countInfo.textContent = `${files.length} image(s) sélectionnée(s)`;
+            previewContainer.appendChild(countInfo);
+            
+            files.forEach((file, index) => {
+                const reader = new FileReader();
                 
-                files.forEach((file, index) => {
-                    const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewDiv = document.createElement('div');
+                    previewDiv.className = 'image-preview';
                     
-                    reader.onload = function(e) {
-                        const previewDiv = document.createElement('div');
-                        previewDiv.className = 'image-preview';
+                    previewDiv.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview ${index + 1}">
+                        <span class="remove-image" data-index="${index}">&times;</span>
+                        <div class="image-name">${file.name}</div>
+                    `;
+                    
+                    // Gestion de la suppression individuelle
+                    previewDiv.querySelector('.remove-image').addEventListener('click', function(event) {
+                        event.stopPropagation();
                         
-                        previewDiv.innerHTML = `
-                            <img src="${e.target.result}" alt="Preview ${index + 1}">
-                            <span class="remove-image">&times;</span>
-                            <div class="image-name">${file.name}</div>
-                        `;
+                        // Créer un nouveau FileList sans le fichier supprimé
+                        const dt = new DataTransfer();
+                        const currentFiles = Array.from(inputElement.files);
+                        const indexToRemove = parseInt(this.getAttribute('data-index'));
                         
-                        previewDiv.querySelector('.remove-image').addEventListener('click', function() {
-                            previewDiv.remove();
-                            // Réinitialiser l'input file
-                            inputElement.value = '';
+                        currentFiles.forEach((file, i) => {
+                            if (i !== indexToRemove) {
+                                dt.items.add(file);
+                            }
                         });
                         
-                        previewContainer.appendChild(previewDiv);
-                    };
+                        // Mettre à jour l'input
+                        inputElement.files = dt.files;
+                        
+                        // Redéclencher l'événement change pour actualiser l'aperçu
+                        const changeEvent = new Event('change', { bubbles: true });
+                        inputElement.dispatchEvent(changeEvent);
+                    });
                     
-                    reader.readAsDataURL(file);
-                });
+                    previewContainer.appendChild(previewDiv);
+                };
                 
-                // Afficher le nombre d'images sélectionnées
-                const countInfo = document.createElement('div');
-                countInfo.className = 'file-count-info';
-                countInfo.textContent = `${files.length} image(s) sélectionnée(s)`;
-                previewContainer.appendChild(countInfo);
-            }
-        });
-    }
+                reader.readAsDataURL(file);
+            });
+        }
+    });
+  }
 }
 
 // Initialize portfolio manager

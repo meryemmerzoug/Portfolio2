@@ -320,32 +320,32 @@ class PortfolioManager {
 
     // Add new project (MODIFIÉ pour sauvegarder)
     async addProject(projectData) {
-    const mainImageData = await this.fileToDataURL(projectData.mainImage);
-    const otherImagesData = [];
-    
-    // Correction ici : traiter tous les fichiers de otherImages
-    if (projectData.otherImages && projectData.otherImages.length > 0) {
-        for (let file of projectData.otherImages) {
-            const dataUrl = await this.fileToDataURL(file);
-            otherImagesData.push(dataUrl);
+        const mainImageData = await this.fileToDataURL(projectData.mainImage);
+        const otherImagesData = [];
+        
+        // Correction ici : traiter tous les fichiers de otherImages
+        if (projectData.otherImages && projectData.otherImages.length > 0) {
+            for (let file of projectData.otherImages) {
+                const dataUrl = await this.fileToDataURL(file);
+                otherImagesData.push(dataUrl);
+            }
         }
+
+        const newProject = {
+            id: this.nextProjectId++,
+            title: projectData.title,
+            createdAt: new Date().toISOString(),
+            images: {
+                main: mainImageData,
+                others: otherImagesData
+            }
+        };
+
+        this.projects.unshift(newProject);
+        this.saveProjects();
+        this.renderProjects();
+        return newProject.id;
     }
-
-    const newProject = {
-        id: this.nextProjectId++,
-        title: projectData.title,
-        createdAt: new Date().toISOString(),
-        images: {
-            main: mainImageData,
-            others: otherImagesData
-        }
-    };
-
-    this.projects.unshift(newProject);
-    this.saveProjects();
-    this.renderProjects();
-    return newProject.id;
-}
 
     // Delete project (MODIFIÉ pour sauvegarder)
     deleteProject(projectId) {
@@ -755,63 +755,212 @@ class PortfolioManager {
 
     // Setup multiple image preview - VERSION CORRIGÉE
     setupMultipleImagePreview(inputElement, previewContainer) {
-    inputElement.addEventListener('change', function() {
-        // Vider le conteneur à chaque nouvelle sélection
-        previewContainer.innerHTML = '';
+        const self = this; // Garder une référence au contexte
         
-        if (this.files && this.files.length > 0) {
-            const files = Array.from(this.files);
+        inputElement.addEventListener('change', function(event) {
+            const files = event.target.files;
             
-            // Afficher le nombre d'images sélectionnées en premier
+            console.log('Fichiers sélectionnés:', files); // Debug
+            
+            if (!files || files.length === 0) {
+                previewContainer.innerHTML = '';
+                previewContainer.classList.remove('has-images');
+                return;
+            }
+
+            // Vider et préparer le conteneur
+            previewContainer.innerHTML = '';
+            previewContainer.classList.add('has-images');
+
+            // Afficher le compteur de fichiers
             const countInfo = document.createElement('div');
             countInfo.className = 'file-count-info';
-            countInfo.textContent = `${files.length} image(s) sélectionnée(s)`;
+            countInfo.innerHTML = `<i class="fas fa-images"></i> ${files.length} image(s) sélectionnée(s)`;
             previewContainer.appendChild(countInfo);
-            
-            files.forEach((file, index) => {
+
+            // Traiter chaque fichier
+            Array.from(files).forEach((file, index) => {
+                // Validation du fichier
+                if (!file.type.startsWith('image/')) {
+                    self.showImageError(previewContainer, file, 'Le fichier n\'est pas une image');
+                    return;
+                }
+
+                if (file.size > 10 * 1024 * 1024) { // 10MB max
+                    self.showImageError(previewContainer, file, 'Fichier trop volumineux (max 10MB)');
+                    return;
+                }
+
                 const reader = new FileReader();
                 
                 reader.onload = function(e) {
                     const previewDiv = document.createElement('div');
                     previewDiv.className = 'image-preview';
-                    
+                    previewDiv.setAttribute('data-index', index);
+
                     previewDiv.innerHTML = `
-                        <img src="${e.target.result}" alt="Preview ${index + 1}">
-                        <span class="remove-image" data-index="${index}">&times;</span>
-                        <div class="image-name">${file.name}</div>
+                        <img src="${e.target.result}" alt="Prévisualisation ${index + 1}">
+                        <span class="remove-image" data-index="${index}" title="Supprimer cette image">
+                            <i class="fas fa-times"></i>
+                        </span>
+                        <div class="image-name">${file.name.length > 15 ? file.name.substring(0, 12) + '...' : file.name}</div>
                     `;
-                    
-                    // Gestion de la suppression individuelle
-                    previewDiv.querySelector('.remove-image').addEventListener('click', function(event) {
-                        event.stopPropagation();
-                        
-                        // Créer un nouveau FileList sans le fichier supprimé
-                        const dt = new DataTransfer();
-                        const currentFiles = Array.from(inputElement.files);
-                        const indexToRemove = parseInt(this.getAttribute('data-index'));
-                        
-                        currentFiles.forEach((file, i) => {
-                            if (i !== indexToRemove) {
-                                dt.items.add(file);
-                            }
-                        });
-                        
-                        // Mettre à jour l'input
-                        inputElement.files = dt.files;
-                        
-                        // Redéclencher l'événement change pour actualiser l'aperçu
-                        const changeEvent = new Event('change', { bubbles: true });
-                        inputElement.dispatchEvent(changeEvent);
-                    });
-                    
+
                     previewContainer.appendChild(previewDiv);
+
+                    // Ajouter l'événement de suppression
+                    const removeBtn = previewDiv.querySelector('.remove-image');
+                    removeBtn.addEventListener('click', function(event) {
+                        event.stopPropagation();
+                        self.removeImage(index, inputElement, previewContainer);
+                    });
                 };
-                
+
+                reader.onerror = function() {
+                    self.showImageError(previewContainer, file, 'Erreur de chargement');
+                };
+
                 reader.readAsDataURL(file);
             });
+        });
+
+        // Ajouter le support du Drag & Drop
+        this.addDragAndDropSupport(previewContainer, inputElement);
+    }
+
+    // Méthode pour supprimer une image
+    removeImage(index, inputElement, previewContainer) {
+        // Créer un nouveau FileList sans le fichier supprimé
+        const dt = new DataTransfer();
+        const currentFiles = Array.from(inputElement.files);
+        
+        currentFiles.forEach((file, i) => {
+            if (i !== index) {
+                dt.items.add(file);
+            }
+        });
+        
+        inputElement.files = dt.files;
+        
+        // Mettre à jour l'affichage
+        this.updatePreviewsAfterRemoval(previewContainer, inputElement);
+    }
+
+    // Mettre à jour les prévisualisations après suppression
+    updatePreviewsAfterRemoval(previewContainer, inputElement) {
+        const files = inputElement.files;
+        previewContainer.innerHTML = '';
+        
+        if (files.length === 0) {
+            previewContainer.classList.remove('has-images');
+            return;
         }
-    });
-  }
+
+        // Réafficher toutes les images restantes
+        Array.from(files).forEach((file, newIndex) => {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const previewDiv = document.createElement('div');
+                previewDiv.className = 'image-preview';
+                previewDiv.setAttribute('data-index', newIndex);
+
+                previewDiv.innerHTML = `
+                    <img src="${e.target.result}" alt="Prévisualisation ${newIndex + 1}">
+                    <span class="remove-image" data-index="${newIndex}" title="Supprimer cette image">
+                        <i class="fas fa-times"></i>
+                    </span>
+                    <div class="image-name">${file.name.length > 15 ? file.name.substring(0, 12) + '...' : file.name}</div>
+                `;
+
+                previewContainer.appendChild(previewDiv);
+
+                // Réattacher l'événement de suppression
+                const removeBtn = previewDiv.querySelector('.remove-image');
+                removeBtn.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                    const indexToRemove = parseInt(this.getAttribute('data-index'));
+                    
+                    // Recréer la FileList sans l'image supprimée
+                    const newDt = new DataTransfer();
+                    const currentFiles = Array.from(inputElement.files);
+                    
+                    currentFiles.forEach((file, i) => {
+                        if (i !== indexToRemove) {
+                            newDt.items.add(file);
+                        }
+                    });
+                    
+                    inputElement.files = newDt.files;
+                    
+                    // Mettre à jour l'affichage
+                    const self = window.portfolioManager;
+                    self.updatePreviewsAfterRemoval(previewContainer, inputElement);
+                });
+            };
+
+            reader.readAsDataURL(file);
+        });
+
+        // Mettre à jour le compteur
+        const countInfo = previewContainer.querySelector('.file-count-info');
+        if (countInfo) {
+            countInfo.innerHTML = `<i class="fas fa-images"></i> ${files.length} image(s) sélectionnée(s)`;
+        }
+    }
+
+    // Support Drag & Drop simplifié
+    addDragAndDropSupport(previewContainer, inputElement) {
+        // Empêcher le comportement par défaut
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            previewContainer.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        // Effet visuel pendant le drag
+        ['dragenter', 'dragover'].forEach(eventName => {
+            previewContainer.addEventListener(eventName, () => {
+                previewContainer.style.borderColor = 'var(--skin-color)';
+                previewContainer.style.background = 'rgba(var(--skin-color-rgb), 0.1)';
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            previewContainer.addEventListener(eventName, () => {
+                previewContainer.style.borderColor = '';
+                previewContainer.style.background = '';
+            }, false);
+        });
+
+        // Gestion du drop
+        previewContainer.addEventListener('drop', (e) => {
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                inputElement.files = files;
+                const changeEvent = new Event('change', { bubbles: true });
+                inputElement.dispatchEvent(changeEvent);
+            }
+        }, false);
+    }
+
+    // Afficher une erreur d'image
+    showImageError(previewContainer, file, errorMessage) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'image-preview invalid';
+        errorDiv.innerHTML = `
+            <div style="display: flex; align-items: center; justify-content: center; height: 100%; flex-direction: column;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 24px; color: #ff4757; margin-bottom: 8px;"></i>
+                <div style="font-size: 11px; text-align: center; color: #ff4757; padding: 0 5px;">
+                    ${file.name.length > 15 ? file.name.substring(0, 12) + '...' : file.name} - ${errorMessage}
+                </div>
+            </div>
+        `;
+        previewContainer.appendChild(errorDiv);
+    }
 }
 
 // Initialize portfolio manager

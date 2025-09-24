@@ -240,7 +240,7 @@ window.addEventListener('resize', function() {
     }
 });
 
-// ===== FIXED PORTFOLIO MANAGER =====
+// ===== PORTFOLIO MANAGER AVEC PHP =====
 class PortfolioManager {
     constructor() {
         this.projects = [];
@@ -253,29 +253,58 @@ class PortfolioManager {
         this.pendingAction = null;
         this.nextProjectId = 1;
         
-        // Clé pour le stockage local
-        this.STORAGE_KEY = 'portfolio_projects';
+        // URL du serveur PHP
+        this.API_URL = 'save_projects.php';
+        
+        // Clé de fallback pour le stockage local
+        this.STORAGE_KEY = 'portfolio_projects_backup';
     }
 
-    // Initialize with saved projects or default ones
-    init() {
-        this.loadProjects();
+    // Initialisation
+    async init() {
+        await this.loadProjects();
         this.setupEventListeners();
         this.renderProjects();
     }
 
-    // Load projects from localStorage or create default ones
-    loadProjects() {
+    // Charger les projets depuis le serveur PHP
+    async loadProjects() {
+        try {
+            const response = await fetch(this.API_URL);
+            
+            if (response.ok) {
+                const projects = await response.json();
+                this.projects = Array.isArray(projects) ? projects : [];
+                
+                // Calculer le prochain ID
+                this.nextProjectId = this.projects.length > 0 
+                    ? Math.max(...this.projects.map(p => p.id)) + 1 
+                    : 1;
+                    
+                this.showStatus('Projects loaded successfully', 'success');
+            } else {
+                throw new Error('Server response not OK');
+            }
+        } catch (error) {
+            console.error('Error loading from server:', error);
+            this.showStatus('Using local backup data', 'error');
+            
+            // Fallback au localStorage
+            this.loadFromLocalStorage();
+        }
+    }
+
+    // Fallback: Charger depuis le localStorage
+    loadFromLocalStorage() {
         const savedProjects = localStorage.getItem(this.STORAGE_KEY);
         
         if (savedProjects) {
             try {
                 this.projects = JSON.parse(savedProjects);
-                // Trouver le prochain ID disponible
                 this.nextProjectId = Math.max(...this.projects.map(p => p.id)) + 1;
                 if (!isFinite(this.nextProjectId)) this.nextProjectId = 1;
             } catch (error) {
-                console.error('Error loading saved projects:', error);
+                console.error('Error loading from localStorage:', error);
                 this.loadDefaultProjects();
             }
         } else {
@@ -283,16 +312,43 @@ class PortfolioManager {
         }
     }
 
-    // Save projects to localStorage
-    saveProjects() {
+    // Sauvegarder les projets sur le serveur PHP
+    async saveProjects() {
         try {
-            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.projects));
+            const response = await fetch(this.API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(this.projects)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                // Sauvegarde de secours dans le localStorage
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.projects));
+                return true;
+            } else {
+                throw new Error(result.error || 'Unknown error');
+            }
         } catch (error) {
-            console.error('Error saving projects:', error);
+            console.error('Error saving to server:', error);
+            
+            // Fallback au localStorage
+            try {
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.projects));
+                this.showStatus('Saved locally (server unavailable)', 'error');
+                return true;
+            } catch (localError) {
+                console.error('Error saving to localStorage:', localError);
+                this.showStatus('Error saving projects', 'error');
+                return false;
+            }
         }
     }
 
-    // Load default projects (only if no saved projects)
+    // Projets par défaut
     loadDefaultProjects() {
         this.projects = [
             {
@@ -315,15 +371,15 @@ class PortfolioManager {
             }
         ];
         this.nextProjectId = 3;
-        this.saveProjects();
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.projects));
     }
 
-    // Add new project
+    // Ajouter un nouveau projet
     async addProject(projectData) {
         const mainImageData = await this.fileToDataURL(projectData.mainImage);
         const otherImagesData = [];
         
-        // Traiter tous les fichiers de otherImages
+        // Traiter les images supplémentaires
         if (projectData.otherImages && projectData.otherImages.length > 0) {
             for (let file of projectData.otherImages) {
                 const dataUrl = await this.fileToDataURL(file);
@@ -342,19 +398,28 @@ class PortfolioManager {
         };
 
         this.projects.unshift(newProject);
-        this.saveProjects();
-        this.renderProjects();
+        
+        // Sauvegarder sur le serveur
+        const saved = await this.saveProjects();
+        if (saved) {
+            this.renderProjects();
+        }
+        
         return newProject.id;
     }
 
-    // Delete project
-    deleteProject(projectId) {
+    // Supprimer un projet
+    async deleteProject(projectId) {
         this.projects = this.projects.filter(p => p.id != projectId);
-        this.saveProjects();
-        this.renderProjects();
+        
+        // Sauvegarder sur le serveur
+        const saved = await this.saveProjects();
+        if (saved) {
+            this.renderProjects();
+        }
     }
 
-    // Convert file to DataURL
+    // Convertir fichier en DataURL
     fileToDataURL(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -364,7 +429,7 @@ class PortfolioManager {
         });
     }
 
-    // Render projects
+    // Afficher les projets
     renderProjects() {
         const container = document.getElementById('portfolioItemsContainer');
         
@@ -396,7 +461,7 @@ class PortfolioManager {
         this.attachProjectEvents();
     }
 
-    // Attach events to projects
+    // Attacher les événements aux projets
     attachProjectEvents() {
         document.querySelectorAll('.portfolio-item').forEach(item => {
             item.addEventListener('click', () => {
@@ -412,7 +477,7 @@ class PortfolioManager {
         });
     }
 
-    // Open lightbox
+    // Ouvrir la lightbox
     openLightbox(projectId) {
         const project = this.projects.find(p => p.id == projectId);
         if (!project) return;
@@ -444,7 +509,7 @@ class PortfolioManager {
         lightbox.style.display = 'flex';
     }
 
-    // Update active thumbnail
+    // Mettre à jour la miniature active
     updateActiveThumb(activeThumb) {
         document.querySelectorAll('.lightbox-thumb').forEach(thumb => {
             thumb.classList.remove('active');
@@ -452,7 +517,7 @@ class PortfolioManager {
         activeThumb.classList.add('active');
     }
 
-    // Navigate images in lightbox
+    // Navigation dans la lightbox
     navigateImage(direction) {
         if (!this.currentLightboxProjectId) return;
 
@@ -472,7 +537,7 @@ class PortfolioManager {
         this.updateActiveThumb(allImages[this.currentImageIndex]);
     }
 
-    // Show delete confirmation
+    // Confirmation de suppression
     showDeleteConfirmation() {
         document.getElementById('confirmationModal').style.display = 'flex';
     }
@@ -482,7 +547,7 @@ class PortfolioManager {
         this.projectToDelete = null;
     }
 
-    // Enable/disable delete mode
+    // Activer/désactiver le mode suppression
     enableDeleteMode() {
         this.deleteMode = true;
         document.getElementById('deleteProjectBtn').classList.add('active');
@@ -496,7 +561,7 @@ class PortfolioManager {
         document.getElementById('portfolioItemsContainer').classList.remove('delete-mode');
     }
 
-    // Show status messages
+    // Messages de statut
     showStatus(message, type) {
         const oldMessages = document.querySelectorAll('.status-message');
         oldMessages.forEach(msg => msg.remove());
@@ -509,7 +574,7 @@ class PortfolioManager {
         setTimeout(() => statusEl.remove(), 3000);
     }
 
-    // Show authentication modal
+    // Modal d'authentification
     showAuthModal() {
         const authModal = document.getElementById('authModal');
         const authOptions = document.querySelectorAll('.auth-option');
@@ -517,7 +582,7 @@ class PortfolioManager {
         const adminCodeInput = document.getElementById('adminCode');
         const authError = document.getElementById('authError');
 
-        // Reset modal state
+        // Réinitialiser le modal
         authOptions.forEach(option => option.classList.remove('active'));
         adminForm.style.display = 'none';
         adminCodeInput.value = '';
@@ -525,7 +590,7 @@ class PortfolioManager {
 
         authModal.style.display = 'flex';
 
-        // Setup option selection
+        // Configuration des options
         authOptions.forEach(option => {
             option.addEventListener('click', function() {
                 authOptions.forEach(opt => opt.classList.remove('active'));
@@ -541,7 +606,7 @@ class PortfolioManager {
         });
     }
 
-    // Handle add project
+    // Gérer l'ajout de projet
     handleAddProject() {
         if (this.userRole !== 'admin') {
             this.pendingAction = 'add';
@@ -551,7 +616,7 @@ class PortfolioManager {
         }
     }
 
-    // Toggle delete mode
+    // Basculer le mode suppression
     toggleDeleteMode() {
         if (this.userRole !== 'admin') {
             this.pendingAction = 'delete';
@@ -566,7 +631,7 @@ class PortfolioManager {
         }
     }
 
-    // Handle form submission
+    // Soumission du formulaire
     async handleFormSubmit(e) {
         e.preventDefault();
         
@@ -594,17 +659,21 @@ class PortfolioManager {
         }
     }
 
-    // Confirm delete
-    confirmDelete() {
+    // Confirmer la suppression
+    async confirmDelete() {
         if (!this.projectToDelete) return;
 
-        this.deleteProject(parseInt(this.projectToDelete));
-        this.hideDeleteConfirmation();
-        this.disableDeleteMode();
-        this.showStatus('Project deleted successfully', 'success');
+        try {
+            await this.deleteProject(parseInt(this.projectToDelete));
+            this.hideDeleteConfirmation();
+            this.disableDeleteMode();
+            this.showStatus('Project deleted successfully', 'success');
+        } catch (error) {
+            this.showStatus('Error deleting project', 'error');
+        }
     }
 
-    // Close modal
+    // Fermer le modal
     closeModal() {
         document.getElementById('addProjectModal').style.display = 'none';
         document.getElementById('projectForm').reset();
@@ -612,39 +681,39 @@ class PortfolioManager {
         document.getElementById('otherImagesPreview').innerHTML = '';
     }
 
-    // Close lightbox
+    // Fermer la lightbox
     closeLightbox() {
         document.getElementById('lightbox').style.display = 'none';
         this.currentLightboxProjectId = null;
     }
 
-    // Setup event listeners
+    // Configuration des événements
     setupEventListeners() {
-        // Add/Delete buttons
+        // Boutons Ajouter/Supprimer
         document.getElementById('addProjectBtn').addEventListener('click', () => this.handleAddProject());
         document.getElementById('deleteProjectBtn').addEventListener('click', () => this.toggleDeleteMode());
         
-        // Form submission
+        // Soumission du formulaire
         document.getElementById('projectForm').addEventListener('submit', (e) => this.handleFormSubmit(e));
         
-        // Modal controls
+        // Contrôles des modals
         document.querySelector('.modal .close').addEventListener('click', () => this.closeModal());
         document.getElementById('cancelProject').addEventListener('click', () => this.closeModal());
         
-        // Delete confirmation
+        // Confirmation de suppression
         document.getElementById('confirmDelete').addEventListener('click', () => this.confirmDelete());
         document.getElementById('cancelDelete').addEventListener('click', () => this.hideDeleteConfirmation());
         
-        // Lightbox navigation
+        // Navigation lightbox
         document.getElementById('prevImage').addEventListener('click', () => this.navigateImage(-1));
         document.getElementById('nextImage').addEventListener('click', () => this.navigateImage(1));
         document.querySelector('.close-lightbox').addEventListener('click', () => this.closeLightbox());
         
-        // Authentication
+        // Authentification
         document.getElementById('confirmAuth').addEventListener('click', () => this.handleAuthConfirm());
         document.getElementById('cancelAuth').addEventListener('click', () => this.handleAuthCancel());
         
-        // Modal backdrop clicks
+        // Clics en dehors des modals
         window.addEventListener('click', (e) => {
             if (e.target.classList.contains('modal')) {
                 if (e.target.id === 'addProjectModal') {
@@ -663,7 +732,7 @@ class PortfolioManager {
         this.setupImagePreviews();
     }
 
-    // Handle authentication confirmation
+    // Confirmation d'authentification
     handleAuthConfirm() {
         const selectedOption = document.querySelector('.auth-option.active');
         const authError = document.getElementById('authError');
@@ -703,13 +772,13 @@ class PortfolioManager {
         this.pendingAction = null;
     }
 
-    // Handle authentication cancel
+    // Annulation d'authentification
     handleAuthCancel() {
         document.getElementById('authModal').style.display = 'none';
         this.pendingAction = null;
     }
 
-    // Setup image previews
+    // Configuration des prévisualisations d'images
     setupImagePreviews() {
         this.setupSingleImagePreview(
             document.getElementById('mainImage'), 
@@ -722,7 +791,7 @@ class PortfolioManager {
         );
     }
 
-    // Setup single image preview
+    // Prévisualisation d'image unique
     setupSingleImagePreview(inputElement, previewContainer) {
         inputElement.addEventListener('change', function() {
             previewContainer.innerHTML = '';
@@ -753,14 +822,12 @@ class PortfolioManager {
         });
     }
 
-    // Setup multiple image preview - VERSION SIMPLIFIÉE ET FONCTIONNELLE
+    // Prévisualisation d'images multiples
     setupMultipleImagePreview(inputElement, previewContainer) {
         const self = this;
         
         inputElement.addEventListener('change', function(event) {
             const files = event.target.files;
-            
-            console.log('Fichiers sélectionnés:', files);
             
             if (!files || files.length === 0) {
                 previewContainer.innerHTML = '';
@@ -768,11 +835,10 @@ class PortfolioManager {
                 return;
             }
 
-            // Vider le conteneur
             previewContainer.innerHTML = '';
             previewContainer.classList.add('has-images');
 
-            // Afficher le compteur
+            // Compteur de fichiers
             const countInfo = document.createElement('div');
             countInfo.className = 'file-count-info';
             countInfo.innerHTML = `<i class="fas fa-images"></i> ${files.length} image(s) sélectionnée(s)`;
@@ -780,7 +846,6 @@ class PortfolioManager {
 
             // Traiter chaque fichier
             Array.from(files).forEach((file, index) => {
-                // Validation basique
                 if (!file.type.startsWith('image/')) {
                     self.showImageError(previewContainer, file, 'Not an image file');
                     return;
@@ -798,7 +863,6 @@ class PortfolioManager {
                         <div class="image-name">${file.name.length > 15 ? file.name.substring(0, 12) + '...' : file.name}</div>
                     `;
                     
-                    // Ajouter l'événement de suppression
                     const removeBtn = previewDiv.querySelector('.remove-image');
                     removeBtn.addEventListener('click', function() {
                         self.removeImageFromList(index, inputElement, previewContainer);
@@ -811,16 +875,14 @@ class PortfolioManager {
             });
         });
 
-        // Support Drag & Drop basique
         this.addBasicDragAndDrop(previewContainer, inputElement);
     }
 
-    // Méthode simplifiée pour supprimer une image
+    // Supprimer une image de la liste
     removeImageFromList(index, inputElement, previewContainer) {
         const dt = new DataTransfer();
         const currentFiles = Array.from(inputElement.files);
         
-        // Recréer la liste sans le fichier supprimé
         currentFiles.forEach((file, i) => {
             if (i !== index) {
                 dt.items.add(file);
@@ -828,13 +890,11 @@ class PortfolioManager {
         });
         
         inputElement.files = dt.files;
-        
-        // Recréer l'événement change pour mettre à jour l'affichage
         const changeEvent = new Event('change', { bubbles: true });
         inputElement.dispatchEvent(changeEvent);
     }
 
-    // Support Drag & Drop basique
+    // Support Drag & Drop
     addBasicDragAndDrop(previewContainer, inputElement) {
         const preventDefaults = (e) => {
             e.preventDefault();
@@ -871,7 +931,7 @@ class PortfolioManager {
     }
 }
 
-// Initialize portfolio manager
+// Initialisation du gestionnaire de portfolio
 let portfolioManager;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -881,14 +941,14 @@ document.addEventListener('DOMContentLoaded', () => {
     window.portfolioManager = portfolioManager;
 });
 
-// Global function for closing lightbox
+// Fonction globale pour fermer la lightbox
 function closeLightbox() {
     if (window.portfolioManager) {
         window.portfolioManager.closeLightbox();
     }
 }
 
-// Keyboard shortcuts
+// Raccourcis clavier
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         const lightbox = document.getElementById('lightbox');

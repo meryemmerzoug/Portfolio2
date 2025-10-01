@@ -129,7 +129,7 @@ class PortfolioManager {
         this.nextProjectId = 1;
         
         // URL du serveur PHP
-        this.API_URL = window.location.origin + '/save_projects.php';
+        this.API_URL = window.location.origin + '/Portfolio2/save_projects.php';
         
         // Clé de fallback pour le stockage local
         this.STORAGE_KEY = 'portfolio_projects_backup';

@@ -7,6 +7,11 @@ header('Access-Control-Allow-Headers: Content-Type');
 // Fichier où seront stockés les projets
 $dataFile = 'projects.json';
 
+// Créer le fichier s'il n'existe pas
+if (!file_exists($dataFile)) {
+    file_put_contents($dataFile, json_encode([]));
+}
+
 // Gérer les requêtes OPTIONS (CORS)
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
